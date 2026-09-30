@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Language Drift</title>
+<meta name="description" content="Same question, same AI model, asked in English, Hindi and Chinese. Do the answers change with the language?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="mock" class="mock" hidden>Preview with <b>mock data</b>. The real run replaces these numbers.</div>
+<header class="top">
+  <p class="eyebrow">AI governance experiment &middot; pilot</p>
+  <h1>Same question. Same model. <span>Different language, different answer?</span></h1>
+  <p class="lede" id="lede">We asked five AI models the same 20 questions in English, Hindi and Chinese, three times each. If an employee in Delhi and a colleague in Shanghai ask the same assistant the same thing, do they get the same answer?</p>
+</header>
+
+<main>
+  <section class="cards" id="cards" aria-label="Headline findings"></section>
+
+  <section class="panel" id="grid-panel">
+    <div class="panel-head">
+      <h2>Where the answers drift</h2>
+      <p class="hint">Each square is one model on one question. Darker means the answer moved more between languages. <span class="key-flag">&#9670; drift beyond normal variation</span> <span class="key-ref">&#8856; refuses in some languages only</span>. Click a square to read the answers.</p>
+    </div>
+    <div class="grid-wrap"><div id="grid" class="grid" role="grid" aria-label="Drift by model and question"></div></div>
+    <div class="scale" id="scale" aria-hidden="true"></div>
+  </section>
+
+  <section class="panel detail" id="detail" aria-live="polite">
+    <div class="panel-head">
+      <h2 id="d-title">Pick a square above</h2>
+      <p class="hint" id="d-sub"></p>
+    </div>
+    <div id="d-q" class="qlangs"></div>
+    <div id="d-strip" class="strip"></div>
+    <div id="d-answers" class="answers"></div>
+  </section>
+
+  <section class="panel two">
+    <div>
+      <h2>Which languages disagree most</h2>
+      <div id="pairs"></div>
+    </div>
+    <div>
+      <h2>Drifting questions, by model</h2>
+      <div id="bymodel"></div>
+    </div>
+  </section>
+
+  <section class="panel method">
+    <h2>How this was measured</h2>
+    <div id="method"></div>
+  </section>
+</main>
+<footer class="foot">Built by Pothuri Sai Eswar &middot; Straive Innovation &middot; data and code: <a href="https://github.com/eshwarpotturi/language-drift">github.com/eshwarpotturi/language-drift</a></footer>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
