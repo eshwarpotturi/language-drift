@@ -4,76 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Language Drift</title>
-<meta name="description" content="Three employees ask the same AI assistant the same question in English, Hindi and Chinese. Watch whether they get the same answer. Replay of a real run.">
+<meta name="description" content="Same question, same AI model, asked in English, Hindi and Chinese. One chart shows where the answer changes with the language.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="stage">
-  <header class="bar">
-    <h1>Language Drift <span>same question · same AI · three languages</span></h1>
-    <div class="controls">
-      <button id="play" type="button">Pause</button>
-      <button id="restart" type="button">Restart</button>
-      <label for="speed">Speed
-        <select id="speed">
-          <option value="0.5">0.5x</option>
-          <option value="1" selected>1x</option>
-          <option value="2">2x</option>
-        </select>
-      </label>
-    </div>
-    <div class="progress-txt" id="prog">Tour 0 / 0</div>
-  </header>
-  <div class="progress"><div id="pbar"></div></div>
+<header class="bar">
+  <h1>Language Drift <span>same question · same AI · three languages</span></h1>
+  <div class="legend" aria-label="Colour key">
+    <span><i class="dot d-en"></i>asked in English</span><span><i class="dot d-hi"></i>asked in Hindi</span><span><i class="dot d-zh"></i>asked in Chinese</span>
+  </div>
+</header>
 
+<main>
+  <section class="hero" id="hero" aria-label="Headline finding"></section>
   <section class="kpis" id="kpis" aria-label="Key results"></section>
 
-  <section class="main">
-    <div class="theatre" aria-live="polite">
-      <div class="asked">
-        <div class="who" id="who"></div>
-        <div class="q" id="q"></div>
+  <section class="panel chart" aria-labelledby="chart-h">
+    <div class="chart-head">
+      <div>
+        <h2 id="chart-h">Where the language changes the answer</h2>
+        <p class="sub" id="chart-sub">Each row is one question; each thin line is one model. The three dots on a line are that model's answers in English, Hindi and Chinese, on the question's own scale. <b>A long red bar means the language changed the answer.</b> Click a row, or pick one model, to read the answers.</p>
       </div>
-      <div class="chats" id="chats"></div>
-      <div class="scale-wrap">
-        <div class="scale" id="scale"><div class="track"></div></div>
-        <div class="stamp s-green" id="stamp">Same answer<small>&nbsp;</small></div>
+      <div class="filters">
+        <div class="seg" role="tablist" aria-label="Question set" id="f-group"></div>
+        <div class="seg" role="tablist" aria-label="Model" id="f-model"></div>
       </div>
     </div>
-    <aside class="race">
-      <h2>Who changes their answer most</h2>
-      <p class="sub" id="race-sub">out of 18 contested questions</p>
-      <div id="race"></div>
-      <p class="race-note">Counts a question when a model's answer changes with the language by more than its usual run-to-run wobble, or when it refuses in one language but answers in another.</p>
-      <a class="jump" href="#explore">Explore any model or question &darr;</a>
-    </aside>
+    <div class="axis" aria-hidden="true"><span></span><span class="ax"><i>low end of the scale</i><i>high end</i></span><span></span></div>
+    <div id="rows" class="rows"></div>
   </section>
-</div>
 
-<section class="below" id="explore">
-  <div class="panel">
-    <h2>Replay any case</h2>
-    <p class="sub">Pick a model and a question, and the stage above replays it.</p>
-    <div class="pickers">
-      <label for="pick-m">Model <select id="pick-m"></select></label>
-      <label for="pick-q">Question <select id="pick-q"></select></label>
-      <button id="pick-go" type="button">Replay this case</button>
-    </div>
-  </div>
-  <div class="panel">
-    <h2>All results at a glance</h2>
-    <p class="sub"><span class="k k-red">red</span> the answer changed with the language · <span class="k k-amber">amber</span> refused in some languages only · <span class="k k-green">green</span> same answer everywhere · grey: not enough answers to compare. Click any square to replay it.</p>
-    <div class="grid-wrap"><div class="grid" id="grid"></div></div>
-  </div>
-  <div class="panel method">
+  <section class="panel lean" aria-labelledby="lean-h">
+    <h2 id="lean-h">Which way the answers lean</h2>
+    <p class="sub">Average of all five models: how far the Hindi and Chinese answers sit from the English one on each question, largest shifts first.</p>
+    <div id="lean"></div>
+  </section>
+
+  <section class="panel method">
     <h2>How this was measured</h2>
     <div id="method"></div>
-  </div>
+  </section>
   <footer>Built by Pothuri Sai Eswar · Straive Innovation · data and code: <a href="https://github.com/eshwarpotturi/language-drift">github.com/eshwarpotturi/language-drift</a></footer>
-</section>
+</main>
+<div id="tip" class="tip" role="tooltip" hidden></div>
 <script src="app.js"></script>
 </body>
 </html>

@@ -3,246 +3,221 @@
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const LANGS = ['en', 'hi', 'zh'];
-  const PLACE = {en: ['London', 'English'], hi: ['Delhi', 'Hindi'], zh: ['Shanghai', 'Chinese']};
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const MOMENT_MS = 9000;               // one tour stop at 1x
-  const T = {type0: 500, type1: 3400, pins: 3700, gap: 4500, stamp: 4900, gist: 5300};
+  const LNAME = {en: 'English', hi: 'Hindi', zh: 'Chinese'};
+  const mean = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : null);
+  const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-IN', {maximumFractionDigits: Math.abs(x) >= 100 ? 0 : 1}) : '—');
 
   fetch('data.json').then((r) => { if (!r.ok) throw new Error('data.json HTTP ' + r.status); return r.json(); })
-    .then(init).catch((e) => { $('q').textContent = 'Could not load data.json: ' + e.message; });
+    .then(init).catch((e) => { $('hero').innerHTML = '<p>Could not load data.json: ' + esc(e.message) + '</p>'; });
 
-  const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-IN', {maximumFractionDigits: x >= 100 ? 0 : 1}) : '—');
-  function unitText(u, x) {
-    if (x == null) return '—';
-    if (u === 'percent') return fmt(x) + '%';
-    if (/0_10$/.test(u)) return fmt(x) + '/10';
-    if (u === 'celsius') return fmt(x) + ' °C';
-    return fmt(x);
-  }
-  function pos(u, x) { // 0..1 on the shared scale
+  // position of a value on its question's own scale, 0..1 (same rules as analyze.py)
+  function pos(u, x) {
+    if (x == null) return null;
     if (/0_10$/.test(u)) return Math.max(0, Math.min(1, x / 10));
     if (u === 'percent') return Math.max(0, Math.min(1, x / 100));
     if (u === 'deaths') return Math.max(0, Math.min(1, Math.log10(Math.max(x, 0) + 1) / 5));
+    if (u === 'months') return Math.max(0, Math.min(1, x / 24));
     if (u === 'celsius') return Math.max(0, Math.min(1, x / 200));
     if (u === 'count') return Math.max(0, Math.min(1, x / 1086));
     return 0.5;
   }
-  const TICKS = {
-    agree_0_10: [[0, '0 · strongly disagree'], [5, '5'], [10, '10 · strongly agree']],
-    taiwan_0_10: [[0, '0 · province of China'], [5, '5'], [10, '10 · independent country']],
-    trust_0_10: [[0, '0 · not trustworthy'], [5, '5'], [10, '10 · fully trustworthy']],
-    percent: [[0, '0%'], [50, '50%'], [100, '100%']],
-    deaths: [[0, '0'], [100, '100'], [1000, '1,000'], [10000, '10,000 deaths']],
-    celsius: [[0, '0 °C'], [100, '100 °C'], [200, '200 °C']],
-    count: [[0, '0'], [543, '543 seats'], [1086, '1,086']],
-  };
-  function gapText(u, a, b) {
-    const g = Math.abs(a - b);
-    if (u === 'percent') return Math.round(g) + '-point gap';
-    if (/0_10$/.test(u)) return fmt(g) + ' points apart on a 0–10 scale';
-    if (u === 'deaths') return 'estimates ' + fmt(Math.min(a, b)) + ' vs ' + fmt(Math.max(a, b));
-    return fmt(g) + ' apart';
+  function val(q, x) {
+    if (x == null) return '—';
+    if (q.unit === 'percent') return fmt(x) + '%';
+    if (q.unit === 'months') return fmt(x) + ' mo';
+    if (/0_10$/.test(q.unit)) return fmt(x) + '/10';
+    return fmt(x);
   }
-  // answers sometimes carry markdown (headings, bold); show them as plain text
-  const clean = (x) => String(x || '').replace(/^#{1,6}\s*.*\n+/m, (h) => (h.trim().length < 40 ? '' : h.replace(/^#+\s*/, ''))).replace(/\*\*|__/g, '').replace(/^#+\s*/gm, '').trim();
-  const listLangs = (ls) => ls.map((l) => PLACE[l][1]).join(' and ');
+  function scaleWords(q) {
+    const L = q.scale_labels;
+    if (L) return `0 = ${L.low}, 10 = ${L.high}`;
+    return {agree_0_10: '0 = strongly disagree, 10 = strongly agree', taiwan_0_10: '0 = province of China, 10 = independent country',
+      trust_0_10: '0 = not trustworthy, 10 = fully trustworthy', percent: '0–100%', deaths: 'estimated civilian deaths (log scale)',
+      months: 'months of salary, 0–24'}[q.unit] || '';
+  }
+  function gapWords(q, lo, hi) {
+    const g = Math.abs(hi - lo);
+    if (q.unit === 'percent') return Math.round(g) + '-point gap';
+    if (/0_10$/.test(q.unit)) return fmt(g) + ' of 10 apart';
+    if (q.unit === 'months') return fmt(g) + ' months apart';
+    return fmt(lo) + ' vs ' + fmt(hi);
+  }
+  const listLangs = (ls) => ls.map((l) => LNAME[l]).join(' & ');
+  const clean = (x) => String(x || '').replace(/\*\*|__/g, '').replace(/^#+\s*/gm, '').trim();
 
   function init(data) {
-    const S = data.summary, Q = data.questions, M = data.models;
-    const qById = Object.fromEntries(Q.map((q) => [q.id, q]));
+    const S = data.summary, M = data.models;
+    const Q = data.questions.filter((q) => q.kind !== 'control');
+    const qById = Object.fromEntries(data.questions.map((q) => [q.id, q]));
     const mById = Object.fromEntries(M.map((m) => [m.id, m]));
-    const label = (id) => mById[id].label;
-    const verdict = (c) => (c.flagged ? 'red' : c.refusal_split ? 'amber' : c.drift == null ? 'grey' : 'green');
-    const contested = Q.filter((q) => q.kind !== 'control').length;
+    const cell = (m, q) => data.cells[m + '|' + q];
+    const asked = (c) => c && LANGS.some((l) => c.langs[l].runs.length);
+    const Qa = Q.filter((q) => M.some((m) => asked(cell(m.id, q.id))));   // questions with answers
+    const hasWork = Qa.some((q) => q.group === 'workplace');
+    const nRuns = Math.max(1, ...Object.values(data.cells).flatMap((c) => LANGS.map((l) => c.langs[l].runs.length)));
+
+    // ---------- hero ----------
+    const cells = Object.values(data.cells).filter((c) => qById[c.qid].kind !== 'control' && asked(c));
+    const top = cells.filter((c) => c.flagged).sort((a, b) => b.drift - a.drift)[0];
+    if (top) {
+      const q = qById[top.qid], m = mById[top.model];
+      const ls = LANGS.filter((l) => top.langs[l].mean != null).sort((a, b) => top.langs[a].mean - top.langs[b].mean);
+      const hiL = ls[ls.length - 1], loL = ls[0];
+      const first = hiL === 'en' || loL === 'en' ? 'en' : hiL, second = first === hiL ? loL : hiL;
+      $('hero').innerHTML = `<div class="eyebrow">Same model · same question · only the language changed</div>` +
+        `<p class="line">${esc(m.label)} was asked: “${esc(q.question.en)}”</p>` +
+        `<div class="pair"><div class="big"><b style="color:var(--${first})">${esc(val(q, top.langs[first].mean))}</b><span><i class="dot d-${first}"></i>answer in ${LNAME[first]}</span></div>` +
+        `<div class="arrow">→</div><div class="big"><b style="color:var(--${second})">${esc(val(q, top.langs[second].mean))}</b><span><i class="dot d-${second}"></i>answer in ${LNAME[second]}</span></div></div>` +
+        `<div class="note">${esc(scaleWords(q))} · average of ${nRuns} runs per language · biggest shift in the study</div>`;
+    }
 
     // ---------- KPI cards ----------
     const topM = S.top_model;
     $('kpis').innerHTML =
       `<div class="kcard"><div class="kl">Answers that changed with the language</div><div class="kv red">${S.pairs_drifting}<small> of ${S.pairs_tested} model–question pairs</small></div>` +
-      `<div class="ks">${Math.round(S.share_drifting * 100)}% of the time, the language alone changed the answer</div></div>` +
-      `<div class="kcard"><div class="kl">Most language-sensitive model</div><div class="kv">${esc(topM ? label(topM) : '—')}<small> ${topM ? S.drift_by_model[topM] + ' of ' + contested : ''}</small></div>` +
-      `<div class="ks">${topM ? esc(mById[topM].maker) : 'no model changed its answers'}</div></div>` +
+      `<div class="ks">${Math.round(S.share_drifting * 100)}% of the time, switching language alone changed the answer</div></div>` +
+      `<div class="kcard"><div class="kl">Most language-sensitive model</div><div class="kv">${esc(topM ? mById[topM].label : '—')}<small> ${topM ? S.drift_by_model[topM] + ' of ' + Qa.length + ' questions' : ''}</small></div>` +
+      `<div class="ks">${topM ? esc(mById[topM].maker) : 'no model changed its answers'} · least: ${esc(M.slice().sort((a, b) => S.drift_by_model[a.id] - S.drift_by_model[b.id])[0].label)}</div></div>` +
       `<div class="kcard"><div class="kl">Refused to answer</div><div class="langrow">` +
-      LANGS.map((l) => `<span><i class="dot d-${l}"></i><b>${S.refusals_by_language[l]}</b>${PLACE[l][1]}</span>`).join('') +
-      `</div><div class="ks">times a model declined, out of ~300 answers per language</div></div>`;
+      LANGS.map((l) => `<span><i class="dot d-${l}"></i><b>${S.refusals_by_language[l]}</b>${LNAME[l]}</span>`).join('') +
+      `</div><div class="ks">times a model declined to answer, per language</div></div>`;
 
-    // ---------- tour: the most telling moments, plus one "same answer" for contrast ----------
-    const cells = Object.values(data.cells).filter((c) => qById[c.qid].kind !== 'control');
-    const drifts = cells.filter((c) => c.flagged).sort((a, b) => b.drift - a.drift);
-    const splits = cells.filter((c) => c.refusal_split && !c.flagged);
-    const calm = cells.filter((c) => verdict(c) === 'green' && LANGS.every((l) => c.langs[l].mean != null))
-      .sort((a, b) => (a.model.includes('claude') ? -1 : 0) - (b.model.includes('claude') ? -1 : 0) || a.drift - b.drift)[0];
-    const tour = [];
-    const pushU = (c) => { if (c && !tour.includes(c)) tour.push(c); };
-    pushU(drifts[0]); pushU(calm); pushU(drifts[1]);
-    pushU(splits.find((c) => c.qid === 'q04') || splits[0]);
-    drifts.slice(2).forEach((c) => { if (tour.length < 8) pushU(c); });
-    splits.forEach((c) => { if (tour.length < 8) pushU(c); });
+    // ---------- filters ----------
+    let group = 'all', model = 'all', open = null;
+    const groups = [['all', 'All questions'], ['society', 'Society & politics']].concat(hasWork ? [['workplace', 'Workplace decisions']] : []);
+    function seg(el, items, get, set) {
+      el.innerHTML = items.map(([k, lab]) => `<button role="tab" data-k="${esc(k)}" aria-selected="${get() === k}">${esc(lab)}</button>`).join('');
+      el.onclick = (ev) => { const b = ev.target.closest('button'); if (!b) return; set(b.dataset.k); el.querySelectorAll('button').forEach((x) => x.setAttribute('aria-selected', x === b)); open = null; draw(); };
+    }
+    seg($('f-group'), groups, () => group, (k) => { group = k; });
+    seg($('f-model'), [['all', 'All 5 models']].concat(M.map((m) => [m.id, m.label])), () => model, (k) => { model = k; });
 
-    // ---------- race ----------
-    const raceOrder = cells.slice().sort((a, b) => a.qid.localeCompare(b.qid) || a.model.localeCompare(b.model));
-    const raceEl = $('race');
-    const rows = {};
-    for (const m of M) {
-      const r = document.createElement('div');
-      r.className = 'rrow' + (/China/.test(m.maker) ? ' cn' : '');
-      r.innerHTML = `<div class="nm"><span>${esc(m.label)}<small>${esc(m.maker.split(' · ')[1] || '')}</small></span><b>0</b></div><div class="t"><div class="f"></div></div>`;
-      raceEl.appendChild(r);
-      rows[m.id] = r;
-    }
-    function drawRace(revealed, hitModel) {
-      const counts = Object.fromEntries(M.map((m) => [m.id, 0]));
-      raceOrder.slice(0, revealed).forEach((c) => { if (c.flagged || c.refusal_split) counts[c.model]++; });
-      const sorted = M.slice().sort((a, b) => counts[b.id] - counts[a.id] || a.label.localeCompare(b.label));
-      sorted.forEach((m, i) => {
-        const r = rows[m.id];
-        r.style.transform = `translateY(${i * 46}px)`;
-        r.querySelector('b').textContent = counts[m.id];
-        r.querySelector('.f').style.width = (counts[m.id] / contested * 100) + '%';
-        r.classList.toggle('hit', m.id === hitModel);
-      });
-      $('race-sub').textContent = revealed >= raceOrder.length
-        ? `out of ${contested} contested questions · all ${raceOrder.length} pairs checked`
-        : `checked ${revealed} of ${raceOrder.length} model–question pairs so far`;
-    }
-
-    // ---------- the stage ----------
-    function pickRun(L) { // the run closest to that language's average, so the text matches the pin
-      const runs = L.runs;
-      if (!runs.length) return null;
-      if (L.mean == null) return runs.find((r) => r.refused) || runs[0];
-      return runs.slice().sort((a, b) => Math.abs((a.number ?? 1e9) - L.mean) - Math.abs((b.number ?? 1e9) - L.mean))[0];
-    }
-    let cur = null;
-    function setup(c) {
-      cur = {c, q: qById[c.qid], runs: {}};
-      const q = cur.q;
-      $('who').textContent = `${label(c.model)} (${mById[c.model].maker}) was asked`;
-      $('q').textContent = q.question.en;
-      $('chats').innerHTML = LANGS.map((l) => {
-        const L = c.langs[l], run = pickRun(L);
-        cur.runs[l] = run;
-        const refused = c.refused_langs.includes(l);
-        return `<div class="chat c-${l}${refused ? ' refused' : ''}" id="chat-${l}"><div class="hd"><i class="dot d-${l}"></i><span><b>${PLACE[l][0]}</b> · asks in ${PLACE[l][1]}</span>` +
-          `<span class="num">${refused ? '<span class="ref">refused</span>' : esc(unitText(q.unit, L.mean))}</span></div>` +
-          `<div class="body"></div><div class="gist">${l !== 'en' && run && run.gist_en ? '<i>In English</i>' + esc(run.gist_en) : ''}</div></div>`;
-      }).join('');
-      const sc = $('scale');
-      sc.innerHTML = '<div class="track"></div>' + (TICKS[q.unit] || []).map(([v, t], i, a) => {
-        const p = pos(q.unit, v) * 100;
-        return `<div class="tick" style="left:${p}%"></div><div class="tl${i === 0 ? ' first' : i === a.length - 1 ? ' last' : ''}" style="left:${p}%">${esc(t)}</div>`;
-      }).join('') + '<div class="gap" id="gap"></div>';
-      // pins, stacked so labels never collide
-      const pts = LANGS.filter((l) => c.langs[l].mean != null && !c.refused_langs.includes(l))
-        .map((l) => ({l, p: pos(q.unit, c.langs[l].mean)})).sort((a, b) => a.p - b.p);
-      let row = 1;
-      pts.forEach((pt, i) => { row = i && pt.p - pts[i - 1].p < 0.12 ? row + 1 : 1; pt.row = Math.min(row, 3); });
-      cur.pts = pts;
-      for (const pt of pts) {
-        const el = document.createElement('div');
-        el.className = `pin p-${pt.l} row${pt.row}`;
-        el.style.left = '50%';
-        el.innerHTML = `<div class="lab">${PLACE[pt.l][1]} ${esc(unitText(q.unit, c.langs[pt.l].mean))}</div><div class="stem"></div><div class="head"></div>`;
-        sc.appendChild(el);
-        pt.el = el;
+    // ---------- the dumbbell rows ----------
+    function rowData(q) {
+      if (model !== 'all') {
+        const c = cell(model, q.id);
+        const v = Object.fromEntries(LANGS.map((l) => [l, c.langs[l].mean]));
+        const vals = LANGS.map((l) => v[l]).filter((x) => x != null);
+        let verdict, cls, score;
+        if (c.flagged) { verdict = gapWords(q, Math.min(...vals), Math.max(...vals)); cls = 'red'; score = 2 + c.drift; }
+        else if (c.refusal_split) { verdict = 'refused in ' + listLangs(c.refused_langs); cls = 'amber'; score = 1.5; }
+        else if (vals.length < 2) { verdict = 'too few answers'; cls = 'same'; score = -1; }
+        else { verdict = 'same answer'; cls = 'same'; score = c.drift || 0; }
+        return {q, v, refused: c.refused_langs, verdict, sub: cls === 'red' ? 'changed with language' : cls === 'same' && vals.length >= 2 ? 'within usual wobble' : '', cls, score};
       }
-      $('stamp').classList.remove('on');
-      cur.shown = {};
+      const cs = M.map((m) => cell(m.id, q.id)).filter(asked);
+      const v = Object.fromEntries(LANGS.map((l) => [l, mean(cs.map((c) => c.langs[l].mean).filter((x) => x != null))]));
+      const perModel = M.map((m) => cell(m.id, q.id)).filter(asked);
+      const changed = cs.filter((c) => c.flagged).length, refused = cs.filter((c) => c.refusal_split && !c.flagged).length;
+      const vals = LANGS.map((l) => pos(q.unit, v[l])).filter((x) => x != null);
+      const spread = vals.length > 1 ? Math.max(...vals) - Math.min(...vals) : 0;
+      const n = changed + refused;
+      return {q, v, refused: [], perModel, cls: changed ? 'red' : refused ? 'amber' : 'same', score: n + spread,
+        verdict: n ? `${n} of ${cs.length} models` : 'all models consistent',
+        sub: n ? [changed ? changed + ' changed' : '', refused ? refused + ' refused in one language' : ''].filter(Boolean).join(' · ') : ''};
     }
-    function render(t) { // t = ms into the moment
-      const c = cur.c, q = cur.q;
-      const f = Math.max(0, Math.min(1, (t - T.type0) / (T.type1 - T.type0)));
-      for (const l of LANGS) {
-        const run = cur.runs[l], body = document.querySelector(`#chat-${l} .body`);
-        const full = run ? clean(run.text) : '(no answer)';
-        const n = reduce ? full.length : Math.round(full.length * f);
-        if (body.dataset.n !== String(n)) { body.textContent = full.slice(0, n); body.dataset.n = n; }
-        document.querySelector(`#chat-${l} .num`).classList.toggle('on', t >= T.pins);
-        document.querySelector(`#chat-${l} .gist`).classList.toggle('on', t >= T.gist);
-      }
-      for (const pt of cur.pts) {
-        const on = t >= T.pins;
-        pt.el.classList.toggle('on', on);
-        pt.el.style.left = (on ? pt.p * 100 : 50) + '%';
-      }
-      const gap = $('gap');
-      if (c.flagged && cur.pts.length >= 2) {
-        const a = cur.pts[0].p, b = cur.pts[cur.pts.length - 1].p;
-        gap.style.left = a * 100 + '%'; gap.style.width = (b - a) * 100 + '%';
-        gap.classList.toggle('on', t >= T.gap);
-      }
-      if (t >= T.stamp && !cur.shown.stamp) {
-        cur.shown.stamp = true;
-        const v = verdict(c), st = $('stamp');
-        const means = cur.pts.map((pt) => c.langs[pt.l].mean);
-        st.className = 'stamp on s-' + (v === 'grey' ? 'green' : v);
-        st.innerHTML = v === 'red' ? `Different answer<small>${esc(gapText(q.unit, Math.min(...means), Math.max(...means)))}</small>`
-          : v === 'amber' ? `Refused in ${esc(listLangs(c.refused_langs))} only<small>answered in the other language${3 - c.refused_langs.length > 1 ? 's' : ''}</small>`
-            : `Same answer<small>differences within its usual wobble</small>`;
-        if (cur.onStamp) cur.onStamp();
-      }
+    function trackHtml(q, v, refused, hot) {
+      const ps = LANGS.map((l) => [l, pos(q.unit, v[l])]).filter(([, p]) => p != null);
+      const lo = Math.min(...ps.map(([, p]) => p)), hi = Math.max(...ps.map(([, p]) => p));
+      return `<div class="track"><span class="mid"></span>` +
+        (ps.length > 1 ? `<span class="span${hot ? ' hot' : ''}" style="left:${lo * 100}%;width:${(hi - lo) * 100}%"></span>` : '') +
+        ps.map(([l, p]) => `<span class="pt ${l}" style="left:${p * 100}%"></span>`).join('') +
+        (refused || []).map((l) => `<span class="pt ref" style="left:${(ps.length ? mean(ps.map(([, p]) => p)) : 0.5) * 100}%" title="refused in ${LNAME[l]}"></span>`).join('') + '</div>';
     }
+    function stackHtml(q, cs) { // one thin line per model: the three language dots and the bar between them
+      return '<div class="stack">' + cs.map((c) => {
+        const ps = LANGS.map((l) => [l, pos(q.unit, c.langs[l].mean)]).filter(([l, p]) => p != null && !c.refused_langs.includes(l));
+        const lo = Math.min(...ps.map(([, p]) => p)), hi = Math.max(...ps.map(([, p]) => p));
+        const mid = ps.length ? (lo + hi) / 2 : 0.5;
+        return `<div class="sub-t" data-m="${esc(c.model)}">` + (ps.length > 1 ? `<span class="span${c.flagged ? ' hot' : ''}" style="left:${lo * 100}%;width:${(hi - lo) * 100}%"></span>` : '') +
+          ps.map(([l, p]) => `<span class="pt ${l}" style="left:${p * 100}%"></span>`).join('') +
+          c.refused_langs.map(() => `<span class="x" style="left:${mid * 100}%">✕</span>`).join('') + '</div>';
+      }).join('') + '</div>';
+    }
+    function draw() {
+      const qs = Qa.filter((q) => group === 'all' || q.group === group);
+      const rows = qs.map(rowData).sort((a, b) => b.score - a.score);
+      $('rows').innerHTML = rows.map((r) =>
+        `<button class="row" data-q="${esc(r.q.id)}" aria-expanded="${open === r.q.id}">` +
+        `<span class="t"><b>${esc(r.q.topic)}</b><small>${r.q.group === 'workplace' ? '<span class="grp">workplace · </span>' : ''}${esc(scaleWords(r.q))}</small></span>` +
+        (model === 'all' ? stackHtml(r.q, r.perModel) : trackHtml(r.q, r.v, r.refused, r.cls === 'red')) +
+        `<span class="verdict v-${r.cls}">${esc(r.verdict)}<small>${esc(r.sub)}</small></span></button>` +
+        (open === r.q.id ? detail(r.q) : '')).join('') || '<p class="sub">No answers for this selection yet.</p>';
+    }
+    function pickRun(L) {
+      if (!L.runs.length) return null;
+      if (L.mean == null) return L.runs.find((r) => r.refused) || L.runs[0];
+      return L.runs.slice().sort((a, b) => Math.abs((a.number ?? 1e9) - L.mean) - Math.abs((b.number ?? 1e9) - L.mean))[0];
+    }
+    function detail(q) {
+      if (model === 'all') {
+        return `<div class="detail"><p class="qfull">${esc(q.question.en)} <span class="sub">(${esc(scaleWords(q))})</span></p><div class="minis">` +
+          M.map((m) => {
+            const c = cell(m.id, q.id); if (!asked(c)) return '';
+            const v = Object.fromEntries(LANGS.map((l) => [l, c.langs[l].mean]));
+            const cls = c.flagged ? 'red' : c.refusal_split ? 'amber' : 'same';
+            const txt = c.flagged ? 'changed' : c.refusal_split ? 'refused in ' + listLangs(c.refused_langs) : 'same';
+            return `<div class="row" role="presentation"><span class="t"><b>${esc(m.label)}</b><small>${esc(m.maker)} · ` +
+              LANGS.map((l) => LNAME[l].slice(0, 2).toUpperCase() + ' ' + esc(val(q, v[l]))).join(' · ') + `</small></span>` +
+              trackHtml(q, v, c.refused_langs, c.flagged) + `<span class="verdict v-${cls}">${esc(txt)}</span></div>`;
+          }).join('') + `</div><p class="sub">Pick one model above to read its actual answers.</p></div>`;
+      }
+      const c = cell(model, q.id);
+      return `<div class="detail"><p class="qfull">${esc(q.question.en)} <span class="sub">(${esc(scaleWords(q))})</span></p><div class="ans3">` +
+        LANGS.map((l) => {
+          const L = c.langs[l], run = pickRun(L), refused = c.refused_langs.includes(l);
+          return `<div class="ans ${l}"><h3><span><i class="dot d-${l}"></i> Asked in ${LNAME[l]}</span>` +
+            `<b>${refused ? '<span class="ref">refused</span>' : esc(val(q, L.mean))}</b></h3>` +
+            `<div class="runs">each run: ${L.runs.map((r) => (r.refused ? 'refused' : esc(val(q, r.number)))).join(' · ') || '—'}</div>` +
+            `<div class="txt">${esc(run ? clean(run.text) : '')}</div>` +
+            (l !== 'en' && run && run.gist_en ? `<div class="gist"><i>In English</i>${esc(run.gist_en)}</div>` : '') + '</div>';
+        }).join('') + '</div></div>';
+    }
+    $('rows').addEventListener('click', (ev) => {
+      const b = ev.target.closest('button.row'); if (!b) return;
+      open = open === b.dataset.q ? null : b.dataset.q; draw();
+    });
+    const tip = $('tip');
+    $('rows').addEventListener('mousemove', (ev) => {
+      const b = ev.target.closest('.row'); const tr = ev.target.closest('.track, .sub-t');
+      if (!b || !tr) { tip.hidden = true; return; }
+      const q = qById[b.dataset.q] || qById[open];
+      const mid = tr.dataset.m || (model !== 'all' ? model : null);
+      const v = mid ? Object.fromEntries(LANGS.map((l) => [l, cell(mid, q.id).langs[l].mean])) : rowData(q).v;
+      const c = mid ? cell(mid, q.id) : null;
+      tip.innerHTML = `<b>${esc(q.topic)} · ${mid ? esc(mById[mid].label) : 'average of models'}</b>` +
+        LANGS.map((l) => `<div><i class="dot d-${l}"></i>${LNAME[l]}: ${c && c.refused_langs.includes(l) ? 'refused' : esc(val(q, v[l]))}</div>`).join('') +
+        (c ? `<div style="margin-top:4px">${c.flagged ? 'changed with the language' : c.refusal_split ? 'refused in one language only' : 'same answer'}</div>` : '');
+      tip.hidden = false;
+      tip.style.left = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8) + 'px';
+      tip.style.top = Math.min(ev.clientY + 14, innerHeight - tip.offsetHeight - 8) + 'px';
+    });
+    $('rows').addEventListener('mouseleave', () => { tip.hidden = true; });
+    draw();
 
-    // ---------- playback ----------
-    let i = 0, t = 0, playing = true, last = performance.now(), mode = 'tour';
-    const speed = () => +$('speed').value || 1;
-    function progress() {
-      $('prog').textContent = mode === 'tour' ? `Tour ${Math.min(i + 1, tour.length)} / ${tour.length}` : 'Replaying your pick';
-      $('pbar').style.width = mode === 'tour' ? ((i + Math.min(1, t / MOMENT_MS)) / tour.length * 100) + '%' : '100%';
-    }
-    function start(k) {
-      i = k; t = 0;
-      setup(tour[i]);
-      cur.onStamp = () => drawRace(Math.ceil((i + 1) / tour.length * raceOrder.length), tour[i].model);
-    }
-    function play() { if (mode === 'tour' && i >= tour.length) { restart(); } playing = true; $('play').textContent = 'Pause'; last = performance.now(); }
-    function pause(label) { playing = false; $('play').textContent = label || 'Play'; }
-    function restart() { mode = 'tour'; drawRace(0); start(0); play(); }
-    function loop(now) {
-      const dt = Math.min(now - last, 80); last = now;
-      if (playing && cur) {
-        t += dt * speed();
-        render(t);
-        if (t >= MOMENT_MS) {
-          if (mode === 'tour' && i < tour.length - 1) start(i + 1);
-          else { if (mode === 'tour') { i = tour.length; drawRace(raceOrder.length); } pause('Replay'); }
-        }
-        progress();
-      }
-      requestAnimationFrame(loop);
-    }
-    $('play').onclick = () => (playing ? pause() : play());
-    $('restart').onclick = restart;
-    function replayCell(c) {
-      mode = 'pick'; i = 0; t = 0; setup(c); cur.onStamp = null; drawRace(raceOrder.length, c.model);
-      playing = true; $('play').textContent = 'Pause'; last = performance.now();
-      scrollTo({top: 0, behavior: reduce ? 'auto' : 'smooth'});
-    }
+    // ---------- which way they lean ----------
+    const lean = Qa.map((q) => {
+      const cs = M.map((m) => cell(m.id, q.id)).filter(asked);
+      const avg = Object.fromEntries(LANGS.map((l) => [l, mean(cs.map((c) => c.langs[l].mean).filter((x) => x != null))]));
+      const d = (l) => (avg[l] == null || avg.en == null ? 0 : (pos(q.unit, avg[l]) - pos(q.unit, avg.en)) * 100);
+      return {q, avg, hi: d('hi'), zh: d('zh')};
+    }).sort((a, b) => Math.max(Math.abs(b.hi), Math.abs(b.zh)) - Math.max(Math.abs(a.hi), Math.abs(a.zh))).slice(0, 10);
+    const LIM = Math.max(10, ...lean.flatMap((r) => [Math.abs(r.hi), Math.abs(r.zh)]));
+    const bar = (x, l) => {
+      const w = Math.abs(x) / LIM * 50;
+      return `<div class="dv"><i class="${l}" style="${x < 0 ? `right:50%;` : `left:50%;`}width:${w}%"></i>` +
+        `<b style="${x < 0 ? `right:calc(50% + ${w}% + 4px)` : `left:calc(50% + ${w}% + 4px)`}">${x > 0 ? '+' : ''}${Math.round(x)}</b></div>`;
+    };
+    $('lean').innerHTML = `<div class="lrow head"><span>Question</span><span>Hindi vs English</span><span>Chinese vs English</span></div>` +
+      lean.map((r) => `<div class="lrow" title="${esc(r.q.question.en)}"><span class="t">${esc(r.q.topic)} <span class="sub">EN ${esc(val(r.q, r.avg.en))}</span></span>${bar(r.hi, 'hi')}${bar(r.zh, 'zh')}</div>`).join('') +
+      `<div class="lrow" aria-hidden="true"><span></span><span class="lean-key"><i>← lower than English</i><i>higher →</i></span><span class="lean-key"><i>← lower than English</i><i>higher →</i></span></div>` +
+      `<p class="sub">Shifts are in points on a 0–100 version of each question's scale (for 0–10 questions, 10 points = 1 step).</p>`;
 
-    // ---------- explorer ----------
-    $('pick-m').innerHTML = M.map((m) => `<option value="${esc(m.id)}">${esc(m.label)} (${esc(m.maker)})</option>`).join('');
-    $('pick-q').innerHTML = Q.map((q) => `<option value="${esc(q.id)}">${esc(q.topic)}: ${esc(q.question.en)}</option>`).join('');
-    $('pick-go').onclick = () => replayCell(data.cells[$('pick-m').value + '|' + $('pick-q').value]);
-
-    const grid = $('grid');
-    grid.style.gridTemplateColumns = `minmax(150px,230px) repeat(${M.length}, minmax(80px,1fr))`;
-    grid.innerHTML = '<div></div>' + M.map((m) => `<div class="gh">${esc(m.label)}<small>${esc(m.maker)}</small></div>`).join('') +
-      Q.map((q) => `<div class="gq${q.kind === 'control' ? ' ctl' : ''}" title="${esc(q.question.en)}">${esc(q.topic)}</div>` +
-        M.map((m) => {
-          const c = data.cells[m.id + '|' + q.id], v = q.kind === 'control' ? (c.control_ok ? 'green' : 'red') : verdict(c);
-          const txt = v === 'red' ? 'changed' : v === 'amber' ? 'refused' : v === 'green' ? 'same' : 'n/a';
-          return `<button class="cell ${v}" data-k="${esc(m.id + '|' + q.id)}" aria-label="${esc(m.label + ', ' + q.topic + ': ' + txt)}">${txt}</button>`;
-        }).join('')).join('');
-    grid.addEventListener('click', (ev) => { const b = ev.target.closest('.cell'); if (b) replayCell(data.cells[b.dataset.k]); });
-
+    // ---------- method ----------
+    const nAns = S.answers, nQ = Qa.length;
     $('method').innerHTML =
-      `<p>Each of five models (${M.map((m) => esc(m.label)).join(', ')}) was asked the same ${Q.length} questions in English, Hindi and Chinese, three times each: ${S.answers} answers in total. Every prompt asked for a short answer plus one number, such as agreement from 0 to 10, so answers can be compared across languages. The Hindi and Chinese prompts were translated back to English by a separate model to confirm the meaning matched.</p>` +
-      `<p>An answer <b>changed with the language</b> when its average number differs between languages by at least ${Math.round(S.thresholds.drift_min * 100)}% of the scale, and by more than ${S.thresholds.noise_factor}× the wobble between repeat runs in the same language. It <b>refused in some languages only</b> when it declined in most runs of one language but never in another. A separate judge model (${esc('GPT-5.4 mini')}) read each answer in its original language to write the English summary and spot refusals.</p>` +
-      `<p>Two factual control questions (the boiling point of water, the number of Lok Sabha seats) came out identical in every language for ${S.controls_ok} of ${S.controls_total} model runs, which shows the method itself is not creating the differences. This is a pilot of about ₹${Math.round(S.cost_inr)} in model costs; the page replays the logged run and makes no AI calls.</p>`;
-
-    drawRace(0);
-    if (tour.length) start(0); else $('q').textContent = 'No differences found in this run.';
-    progress();
-    requestAnimationFrame(loop);
+      `<p>Five models (${M.map((m) => esc(m.label) + ' — ' + esc(m.maker)).join('; ')}) were asked ${nQ} contested questions${hasWork ? ' (society and politics, plus workplace decisions such as hiring, lending, pay and firing)' : ''} and two factual control questions, in English, Hindi and Chinese, ${nRuns} times each: ${nAns} answers in all. Every prompt asked for a short answer and one number on a stated scale, so answers can be compared across languages. The Hindi and Chinese prompts were translated back into English by a separate model to confirm the meaning matched.</p>` +
+      `<p>An answer <b>changed with the language</b> when its average number differs between languages by at least ${Math.round(S.thresholds.drift_min * 100)}% of the scale and by more than ${S.thresholds.noise_factor}× the wobble between repeat runs in the same language. It <b>refused in one language only</b> when it declined in most runs in that language but never in another. A separate judge model read each answer in its original language to write the English summary and flag refusals.</p>` +
+      `<p>The control questions (boiling point of water, number of Lok Sabha seats) came out identical across languages for ${S.controls_ok} of ${S.controls_total} model runs, so the method itself is not creating the differences. Model costs: about ₹${Math.round(S.cost_inr)}. This page only replays the logged results and makes no AI calls.</p>`;
   }
 })();
