@@ -69,6 +69,7 @@ def test_errors_ignored_and_empty_ok():
     qset = load_questions()
     d = build([], [], qset)
     assert d["summary"]["pairs_drifting"] == 0 and d["summary"]["answers"] == 0
+    assert d["summary"]["pairs_tested"] == 0
 
 
 def test_refusal_split_needs_clean_contrast():

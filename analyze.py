@@ -95,7 +95,9 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
             cells[f"{m}|{q['id']}"] = cell
             cell_list.append(cell)
 
-    test = [c for c in cell_list if next(q for q in qs if q["id"] == c["qid"])["kind"] != "control"]
+    # only pairs that were actually asked count (questions added later have no answers until their run)
+    test = [c for c in cell_list if next(q for q in qs if q["id"] == c["qid"])["kind"] != "control"
+            and any(c["langs"][l]["runs"] for l in config.LANGS)]
     flagged = [c for c in test if c["flagged"] or c["refusal_split"]]
     by_model = {m: sum(1 for c in flagged if c["model"] == m) for m in mids}
     by_q = {q["id"]: sum(1 for c in flagged if c["qid"] == q["id"]) for q in qs}
