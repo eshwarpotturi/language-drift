@@ -33,3 +33,22 @@ def judge_prompt(q, answer_text):
         '"hedged": true if it avoids taking any position or only lists both sides,\n'
         '"number": the single number the answer gives for the number requested, or null.'
     )
+
+
+def row_key(r):
+    return f"{r['model']}|{r['qid']}|{r['lang']}|{r['run']}"
+
+
+def is_truncated(r):
+    """The model ran out of tokens before finishing (usually hidden reasoning ate the budget)."""
+    limit = r.get("max_tokens", 700)
+    return bool(r.get("completion_tokens")) and r["completion_tokens"] >= limit - 5 and r.get("number") is None
+
+
+def latest_ok(rows):
+    """One row per key: the last one that neither errored nor got cut off."""
+    out = {}
+    for r in rows:
+        if not r.get("error") and not is_truncated(r):
+            out[row_key(r)] = r
+    return list(out.values())

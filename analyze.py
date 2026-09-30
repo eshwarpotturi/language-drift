@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ld import config
 from ld.parse import strip_number_line
-from ld.prompts import load_questions
+from ld.prompts import latest_ok, load_questions
 
 
 def normalise(unit, x):
@@ -131,7 +131,7 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    answers = load_jsonl(argv[0] if argv else "logs/answers.jsonl")
+    answers = latest_ok(load_jsonl(argv[0] if argv else "logs/answers.jsonl"))
     judged = load_jsonl(argv[1] if len(argv) > 1 else "logs/judged.jsonl")
     out = Path(argv[2] if len(argv) > 2 else "dashboard/data.json")
     spend = Path("logs/spend.json")

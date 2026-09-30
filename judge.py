@@ -8,7 +8,7 @@ import httpx
 from ld import config
 from ld.budget import BudgetExceeded, Guard, Ledger
 from ld.openrouter import OpenRouterError, chat
-from ld.prompts import JUDGE_SYSTEM, judge_prompt, load_questions
+from ld.prompts import JUDGE_SYSTEM, judge_prompt, latest_ok, load_questions
 
 ANS = Path("logs/answers.jsonl")
 OUT = Path("logs/judged.jsonl")
@@ -39,7 +39,7 @@ def parse_judgement(text):
 async def main():
     qmap = {q["id"]: q for q in load_questions()["questions"]}
     answers = [json.loads(l) for l in ANS.read_text(encoding="utf-8").splitlines() if l.strip()]
-    answers = [a for a in answers if not a.get("error")]
+    answers = latest_ok(answers)
     done = {key(json.loads(l)) for l in OUT.read_text(encoding="utf-8").splitlines() if l.strip()} if OUT.exists() else set()
     todo = [a for a in answers if key(a) not in done]
     ledger = Ledger()

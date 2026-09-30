@@ -14,7 +14,7 @@ from ld import config
 from ld.budget import BudgetExceeded, Guard, Ledger
 from ld.openrouter import OpenRouterError, chat
 from ld.parse import parse_number
-from ld.prompts import answer_prompt, load_questions
+from ld.prompts import answer_prompt, is_truncated, load_questions
 
 OUT = Path("logs/answers.jsonl")
 
@@ -38,20 +38,23 @@ def done_keys(path=OUT):
             row = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if not row.get("error"):
+        if not row.get("error") and not is_truncated(row):
             keys.add(job_key(row))
     return keys
 
 
 async def run(jobs, qset, budget_usd, limit=None):
     qmap = {q["id"]: q for q in qset["questions"]}
-    todo = [j for j in jobs if job_key(j) not in done_keys()][:limit]
+    remaining = [j for j in jobs if job_key(j) not in done_keys()]
+    already = len(jobs) - len(remaining)
+    todo = remaining[:limit]
     ledger = Ledger()
     guard = Guard(ledger, "answers", len(todo), budget_usd, config.GUARD_AFTER_CALLS)
     OUT.parent.mkdir(exist_ok=True)
     sem = asyncio.Semaphore(config.CONCURRENCY)
     stop = asyncio.Event()
-    print(f"{len(todo)} calls to make ({len(jobs) - len(todo)} already done); spent so far ${ledger.total:.3f}")
+    print(f"{len(todo)} calls to make ({already} already done, {len(remaining) - len(todo)} left for later); "
+          f"spent so far ${ledger.total:.3f}")
 
     async with httpx.AsyncClient() as client:
         async def one(j):
@@ -65,7 +68,7 @@ async def run(jobs, qset, budget_usd, limit=None):
                 try:
                     res = await chat(client, j["model"], [{"role": "user", "content": answer_prompt(qset, q, j["lang"])}],
                                      max_tokens=config.ANSWER_MAX_TOKENS, temperature=config.TEMPERATURE)
-                    row.update(res, number=parse_number(res["text"]))
+                    row.update(res, number=parse_number(res["text"]), max_tokens=config.ANSWER_MAX_TOKENS)
                 except OpenRouterError as e:
                     row.update(error=str(e), cost_usd=0.0)
                 with OUT.open("a", encoding="utf-8") as f:

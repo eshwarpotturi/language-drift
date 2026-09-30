@@ -35,3 +35,13 @@ def test_missing():
 
 def test_strip():
     assert strip_number_line("Body text.\nNUMBER: 4") == "Body text."
+
+
+def test_truncated_rows_are_retried_and_deduped():
+    from ld.prompts import is_truncated, latest_ok
+    cut = {"model": "g", "qid": "q01", "lang": "en", "run": 0, "text": "Proponents argue", "number": None, "completion_tokens": 696}
+    ok = dict(cut, text="x\nNUMBER: 5", number=5.0, completion_tokens=900, max_tokens=1500)
+    refused = dict(cut, text="I can't discuss this.", completion_tokens=12)
+    assert is_truncated(cut) and not is_truncated(ok) and not is_truncated(refused)
+    assert latest_ok([cut, ok]) == [ok]
+    assert latest_ok([refused]) == [refused]
