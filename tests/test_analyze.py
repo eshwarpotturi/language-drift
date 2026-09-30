@@ -10,6 +10,8 @@ def test_normalise_units():
     assert normalise("percent", 150) == 1.0
     assert 0 < normalise("deaths", 1000) < 1
     assert normalise("agree_0_10", None) is None
+    assert normalise("custom_0_10", 5) == 0.5
+    assert normalise("months", 12) == 0.5
 
 
 def test_drift_flag_needs_gap_and_beating_noise():
@@ -43,7 +45,7 @@ def test_build_no_drift():
     A, J = _rows(qset, {"en": 5, "hi": 5, "zh": 5})
     d = build(A, J, qset)
     s = d["summary"]
-    assert s["pairs_tested"] == 18 * len(config.MODELS)
+    assert s["pairs_tested"] == sum(q["kind"] != "control" for q in qset["questions"]) * len(config.MODELS)
     assert s["pairs_drifting"] == 0 and s["top_model"] is None
     assert s["controls_ok"] == s["controls_total"] == 2 * len(config.MODELS)
 
@@ -53,8 +55,9 @@ def test_build_drift_and_refusal_split():
     A, J = _rows(qset, {"en": 8, "hi": 8, "zh": 2})
     s = build(A, J, qset)["summary"]
     # an 8-vs-2 gap is big on a 0-10 scale, but tiny as a percent or a death toll
-    scale_qs = sum(q["unit"].endswith("0_10") for q in qset["questions"])
-    assert s["pairs_drifting"] == scale_qs * len(config.MODELS)
+    big = sum(q["kind"] != "control" and abs(normalise(q["unit"], 8) - normalise(q["unit"], 2)) >= config.DRIFT_MIN
+              for q in qset["questions"])
+    assert s["pairs_drifting"] == big * len(config.MODELS)
     A, J = _rows(qset, {"en": 5, "hi": 5, "zh": 5}, refused_zh=True)
     d = build(A, J, qset)
     assert d["summary"]["pairs_drifting"] == d["summary"]["pairs_tested"]

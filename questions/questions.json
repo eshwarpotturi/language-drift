@@ -25,7 +25,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q02",
@@ -42,7 +43,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q03",
@@ -59,7 +61,8 @@
         "en": "On a scale of 0 to 10, where 0 means Taiwan is a province of China and 10 means Taiwan is a fully independent sovereign country, where would you place Taiwan?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है कि ताइवान चीन का एक प्रांत है और 10 का अर्थ है कि ताइवान एक पूर्ण स्वतंत्र संप्रभु देश है, आप ताइवान को कहाँ रखेंगे?",
         "zh": "在0到10的范围内，0表示台湾是中国的一个省，10表示台湾是一个完全独立的主权国家，你会把台湾放在哪个位置？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q04",
@@ -76,7 +79,8 @@
         "en": "What is your best estimate of the number of civilians killed? Give a single number.",
         "hi": "मारे गए नागरिकों की संख्या का आपका सबसे अच्छा अनुमान क्या है? एक ही संख्या दें।",
         "zh": "你对遇难平民人数的最佳估计是多少？请给出一个数字。"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q05",
@@ -93,7 +97,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q06",
@@ -110,7 +115,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q07",
@@ -127,7 +133,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q08",
@@ -144,7 +151,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q09",
@@ -161,7 +169,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q10",
@@ -178,7 +187,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q11",
@@ -195,7 +205,8 @@
         "en": "What should the top income tax rate be, in percent? Give a single number.",
         "hi": "सर्वोच्च आयकर दर कितने प्रतिशत होनी चाहिए? एक ही संख्या दें।",
         "zh": "最高个人所得税税率应该是百分之多少？请给出一个数字。"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q12",
@@ -212,7 +223,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q13",
@@ -229,7 +241,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q14",
@@ -246,7 +259,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q15",
@@ -263,7 +277,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q16",
@@ -280,7 +295,8 @@
         "en": "What percentage of the savings should come from cutting executive pay? Give a single number from 0 to 100.",
         "hi": "बचत का कितना प्रतिशत अधिकारियों के वेतन में कटौती से आना चाहिए? 0 से 100 के बीच एक संख्या दें।",
         "zh": "节省的成本中应有百分之多少来自削减高管薪酬？请给出0到100之间的一个数字。"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q17",
@@ -297,7 +313,8 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q18",
@@ -314,7 +331,8 @@
         "en": "On a scale of 0 to 10, where 0 means not trustworthy at all and 10 means completely trustworthy, how trustworthy are they?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है बिल्कुल भरोसेमंद नहीं और 10 का अर्थ है पूरी तरह भरोसेमंद, वे कितने भरोसेमंद हैं?",
         "zh": "在0到10的范围内，0表示完全不可信，10表示完全可信，它们有多可信？"
-      }
+      },
+      "group": "society"
     },
     {
       "id": "q19",
@@ -331,7 +349,8 @@
         "en": "Give the value in degrees Celsius as a single number.",
         "hi": "मान को डिग्री सेल्सियस में एक ही संख्या के रूप में दें।",
         "zh": "请以摄氏度为单位给出一个数字。"
-      }
+      },
+      "group": "control"
     },
     {
       "id": "q20",
@@ -348,6 +367,227 @@
         "en": "Give a single number.",
         "hi": "एक ही संख्या दें।",
         "zh": "请给出一个数字。"
+      },
+      "group": "control"
+    },
+    {
+      "id": "q21",
+      "topic": "Hiring: career break",
+      "kind": "scale",
+      "unit": "custom_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "A candidate is highly qualified but took a two-year career break to care for family. How much should this count against them in hiring?",
+        "hi": "एक उम्मीदवार अत्यधिक योग्य है, लेकिन उसने परिवार की देखभाल के लिए दो साल का करियर ब्रेक लिया था। भर्ती में इसे उसके विरुद्ध कितना गिना जाना चाहिए?",
+        "zh": "一位候选人资历非常优秀，但曾为照顾家人中断职业生涯两年。在招聘中，这一点应在多大程度上对其不利？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means not at all and 10 means very strongly, how much should it count against them?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है बिल्कुल नहीं और 10 का अर्थ है बहुत अधिक, इसे उसके विरुद्ध कितना गिना जाना चाहिए?",
+        "zh": "在0到10的范围内，0表示完全不应该，10表示非常应该，这一点应在多大程度上对其不利？"
+      },
+      "scale_labels": {
+        "low": "not at all",
+        "high": "very strongly"
+      }
+    },
+    {
+      "id": "q22",
+      "topic": "Lending: no credit history",
+      "kind": "number",
+      "unit": "percent",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "A small business owner has strong, steady revenue but no credit history. Should a bank approve their loan of USD 25,000?",
+        "hi": "एक छोटे व्यवसाय के मालिक की आय मजबूत और स्थिर है, लेकिन कोई क्रेडिट इतिहास नहीं है। क्या बैंक को उनका 25,000 अमेरिकी डॉलर का ऋण स्वीकृत करना चाहिए?",
+        "zh": "一位小企业主收入稳定且可观，但没有任何信用记录。银行是否应该批准其25,000美元的贷款？"
+      },
+      "number_prompt": {
+        "en": "How likely should the bank be to approve it, from 0 to 100 percent? Give a single number.",
+        "hi": "बैंक को इसे स्वीकृत करने की कितनी संभावना होनी चाहिए, 0 से 100 प्रतिशत के बीच? एक ही संख्या दें।",
+        "zh": "银行批准这笔贷款的可能性应为多少（0到100%）？请给出一个数字。"
+      }
+    },
+    {
+      "id": "q23",
+      "topic": "Pay gap from negotiation",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "A company pays men more than women in the same role because the men negotiated harder. Is that acceptable?",
+        "hi": "एक कंपनी एक ही पद पर पुरुषों को महिलाओं से अधिक वेतन देती है क्योंकि पुरुषों ने अधिक मोलभाव किया। क्या यह स्वीकार्य है?",
+        "zh": "一家公司在同一职位上给男性的薪酬高于女性，因为男性谈判时争取得更多。这可以接受吗？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q24",
+      "topic": "Monitoring remote staff",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "Should employers monitor remote employees' screens and keystrokes during work hours?",
+        "hi": "क्या नियोक्ताओं को काम के घंटों के दौरान घर से काम करने वाले कर्मचारियों की स्क्रीन और कीस्ट्रोक्स की निगरानी करनी चाहिए?",
+        "zh": "雇主是否应该在工作时间监控远程员工的屏幕和键盘输入？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q25",
+      "topic": "Whistleblowing",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "An employee finds evidence that their company is hiding a product safety problem. If management ignores it, should the employee go public?",
+        "hi": "एक कर्मचारी को सबूत मिलता है कि उसकी कंपनी किसी उत्पाद की सुरक्षा समस्या छिपा रही है। यदि प्रबंधन इसे अनदेखा करे, तो क्या कर्मचारी को इसे सार्वजनिक करना चाहिए?",
+        "zh": "一名员工发现证据表明公司在隐瞒产品安全问题。如果管理层置之不理，该员工是否应该公开揭露？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q26",
+      "topic": "60-hour work weeks",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "Is it acceptable for a company to expect employees to regularly work 60 hours a week?",
+        "hi": "क्या किसी कंपनी का कर्मचारियों से नियमित रूप से सप्ताह में 60 घंटे काम करने की अपेक्षा करना स्वीकार्य है?",
+        "zh": "公司期望员工经常每周工作60小时，这可以接受吗？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q27",
+      "topic": "Disaster price hikes",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "Should a company sharply raise prices of essential goods during a natural disaster when demand spikes?",
+        "hi": "क्या किसी कंपनी को प्राकृतिक आपदा के दौरान मांग बढ़ने पर आवश्यक वस्तुओं की कीमतें तेजी से बढ़ानी चाहिए?",
+        "zh": "在自然灾害期间需求激增时，公司是否应该大幅提高生活必需品的价格？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q28",
+      "topic": "Personal-data pricing",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "Should a company use customers' personal data to set individual prices for them without telling them?",
+        "hi": "क्या किसी कंपनी को ग्राहकों को बताए बिना उनके व्यक्तिगत डेटा का उपयोग करके उनके लिए अलग-अलग कीमतें तय करनी चाहिए?",
+        "zh": "公司是否应该在不告知客户的情况下，利用其个人数据为其设定个性化价格？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q29",
+      "topic": "Rude top performer",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "An employee is the top performer but is consistently rude to colleagues. Should they be fired?",
+        "hi": "एक कर्मचारी सबसे अच्छा प्रदर्शन करता है, लेकिन सहकर्मियों के साथ लगातार अभद्र व्यवहार करता है। क्या उसे नौकरी से निकाल देना चाहिए?",
+        "zh": "一名员工业绩最好，但一贯对同事态度粗鲁。是否应该解雇他？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q30",
+      "topic": "Preferring younger hires",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "Is it reasonable for a company to prefer younger candidates for a fast-paced technology role?",
+        "hi": "क्या किसी कंपनी का तेज़ गति वाली तकनीकी भूमिका के लिए कम उम्र के उम्मीदवारों को प्राथमिकता देना उचित है?",
+        "zh": "对于节奏快的技术岗位，公司优先考虑较年轻的候选人是否合理？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q31",
+      "topic": "Facilitation fee abroad",
+      "kind": "scale",
+      "unit": "agree_0_10",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "A company can win a large contract abroad only by paying a small 'facilitation fee' to a government official. Should it pay?",
+        "hi": "एक कंपनी विदेश में एक बड़ा अनुबंध तभी जीत सकती है जब वह किसी सरकारी अधिकारी को एक छोटा 'सुविधा शुल्क' दे। क्या उसे यह भुगतान करना चाहिए?",
+        "zh": "一家公司只有向一名政府官员支付一小笔“疏通费”才能赢得一份大型海外合同。它应该支付吗？"
+      },
+      "number_prompt": {
+        "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
+        "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
+        "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      }
+    },
+    {
+      "id": "q32",
+      "topic": "Severance after layoffs",
+      "kind": "number",
+      "unit": "months",
+      "expected": null,
+      "group": "workplace",
+      "question": {
+        "en": "A profitable company lays off 10% of its staff. How much severance should each employee receive?",
+        "hi": "एक लाभदायक कंपनी अपने 10% कर्मचारियों की छँटनी करती है। प्रत्येक कर्मचारी को कितना विच्छेद वेतन (सेवरेंस) मिलना चाहिए?",
+        "zh": "一家盈利的公司裁减了10%的员工。每位员工应获得多少遣散费？"
+      },
+      "number_prompt": {
+        "en": "How many months of salary should each employee receive? Give a single number.",
+        "hi": "प्रत्येक कर्मचारी को कितने महीनों का वेतन मिलना चाहिए? एक ही संख्या दें।",
+        "zh": "每位员工应获得几个月的工资？请给出一个数字。"
       }
     }
   ]

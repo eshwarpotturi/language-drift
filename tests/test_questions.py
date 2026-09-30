@@ -4,7 +4,8 @@ from ld.prompts import answer_prompt, load_questions
 
 def test_every_question_has_every_language():
     qset = load_questions()
-    assert len(qset["questions"]) == 20
+    assert len(qset["questions"]) == 32
+    assert sum(q["group"] == "workplace" for q in qset["questions"]) == 12
     for q in qset["questions"]:
         for lang in config.LANGS:
             assert q["question"][lang].strip() and q["number_prompt"][lang].strip()
@@ -14,4 +15,4 @@ def test_every_question_has_every_language():
 
 def test_jobs_count():
     from run_pilot import build_jobs
-    assert len(build_jobs(load_questions())) == 20 * 3 * len(config.MODELS) * config.RUNS
+    assert len(build_jobs(load_questions())) == 32 * 3 * len(config.MODELS) * config.RUNS

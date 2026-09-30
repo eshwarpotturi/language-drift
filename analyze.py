@@ -15,7 +15,7 @@ def normalise(unit, x):
     """Map every unit onto 0..1 so gaps are comparable across questions."""
     if x is None or (isinstance(x, float) and math.isnan(x)):
         return None
-    if unit in ("agree_0_10", "taiwan_0_10", "trust_0_10"):
+    if unit.endswith("0_10"):
         return max(0.0, min(1.0, x / 10))
     if unit == "percent":
         return max(0.0, min(1.0, x / 100))
@@ -25,6 +25,8 @@ def normalise(unit, x):
         return x / 100
     if unit == "count":
         return x / 543
+    if unit == "months":
+        return max(0.0, min(1.0, x / 24))
     return x
 
 
@@ -116,6 +118,7 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
         "languages": qset["languages"],
         "models": models,
         "questions": [{"id": q["id"], "topic": q["topic"], "kind": q["kind"], "unit": q["unit"],
+                       "group": q.get("group", "society"), "scale_labels": q.get("scale_labels"),
                        "expected": q["expected"], "question": q["question"], "number_prompt": q["number_prompt"]}
                       for q in qs],
         "cells": cells,

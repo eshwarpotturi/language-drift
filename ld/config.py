@@ -10,12 +10,13 @@ MODELS = [
 ]
 JUDGE_MODEL = "openai/gpt-5.4-mini"  # not one of the contestants, so it has no stake
 LANGS = ["en", "hi", "zh"]
-RUNS = 3
+RUNS = 5
 TEMPERATURE = 0.7
 ANSWER_MAX_TOKENS = 1500  # Gemini spends hidden reasoning tokens from this budget; 700 cut answers off
 USD_TO_INR = 88.0  # display and budget only
-BUDGET_INR = 300.0          # hard ceiling for everything together
-ANSWERS_BUDGET_INR = 170.0  # the answers step stops here, leaving room for judging
+# Budgets are cumulative across the whole project (the pilot spent about ₹146).
+BUDGET_INR = 450.0          # hard ceiling: pilot + expansion (≈ ₹300 on top of the pilot)
+ANSWERS_BUDGET_INR = 360.0  # the answers step stops here, leaving room for judging
 GUARD_AFTER_CALLS = 20  # project total cost after this many calls, abort if over budget
 CONCURRENCY = 8
 
