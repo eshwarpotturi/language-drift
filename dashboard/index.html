@@ -4,68 +4,76 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Language Drift</title>
-<meta name="description" content="Same question, same AI model, asked in English, Hindi and Chinese. Do the answers change with the language?">
+<meta name="description" content="Three employees ask the same AI assistant the same question in English, Hindi and Chinese. Watch whether they get the same answer. Replay of a real run.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="mock" class="mock" hidden>Preview with <b>mock data</b>. The real run replaces these numbers.</div>
-<header class="top">
-  <p class="eyebrow">AI governance experiment &middot; pilot</p>
-  <h1>Same question. Same model. <span>Different language, different answer?</span></h1>
-  <p class="lede" id="lede">We asked five AI models the same 20 questions in English, Hindi and Chinese, three times each. If an employee in Delhi and a colleague in Shanghai ask the same assistant the same thing, do they get the same answer?</p>
-</header>
-
-<main>
-  <section class="cards" id="cards" aria-label="Headline findings"></section>
-
-  <section class="panel" id="top-panel">
-    <div class="panel-head">
-      <h2>The biggest shifts</h2>
-      <p class="hint">Same model, same question, only the language changed. Click one to read the answers.</p>
+<div class="stage">
+  <header class="bar">
+    <h1>Language Drift <span>same question · same AI · three languages</span></h1>
+    <div class="controls">
+      <button id="play" type="button">Pause</button>
+      <button id="restart" type="button">Restart</button>
+      <label for="speed">Speed
+        <select id="speed">
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+        </select>
+      </label>
     </div>
-    <div id="top" class="top-list"></div>
+    <div class="progress-txt" id="prog">Tour 0 / 0</div>
+  </header>
+  <div class="progress"><div id="pbar"></div></div>
+
+  <section class="kpis" id="kpis" aria-label="Key results"></section>
+
+  <section class="main">
+    <div class="theatre" aria-live="polite">
+      <div class="asked">
+        <div class="who" id="who"></div>
+        <div class="q" id="q"></div>
+      </div>
+      <div class="chats" id="chats"></div>
+      <div class="scale-wrap">
+        <div class="scale" id="scale"><div class="track"></div></div>
+        <div class="stamp s-green" id="stamp">Same answer<small>&nbsp;</small></div>
+      </div>
+    </div>
+    <aside class="race">
+      <h2>Who changes their answer most</h2>
+      <p class="sub" id="race-sub">out of 18 contested questions</p>
+      <div id="race"></div>
+      <p class="race-note">Counts a question when a model's answer changes with the language by more than its usual run-to-run wobble, or when it refuses in one language but answers in another.</p>
+      <a class="jump" href="#explore">Explore any model or question &darr;</a>
+    </aside>
   </section>
+</div>
 
-  <section class="panel" id="grid-panel">
-    <div class="panel-head">
-      <h2>Where the answers drift</h2>
-      <p class="hint">Each square is one model on one question. Darker means the answer moved more between languages. <span class="key-flag">&#9670; drift beyond normal variation</span> <span class="key-ref">&#8856; refuses in some languages only</span>. Click a square to read the answers.</p>
+<section class="below" id="explore">
+  <div class="panel">
+    <h2>Replay any case</h2>
+    <p class="sub">Pick a model and a question, and the stage above replays it.</p>
+    <div class="pickers">
+      <label for="pick-m">Model <select id="pick-m"></select></label>
+      <label for="pick-q">Question <select id="pick-q"></select></label>
+      <button id="pick-go" type="button">Replay this case</button>
     </div>
-    <div class="grid-wrap"><div id="grid" class="grid" role="grid" aria-label="Drift by model and question"></div></div>
-    <div class="scale" id="scale" aria-hidden="true"></div>
-  </section>
-
-  <section class="panel detail" id="detail" aria-live="polite">
-    <div class="panel-head">
-      <h2 id="d-title">Pick a square above</h2>
-      <p class="hint" id="d-sub"></p>
-    </div>
-    <div id="d-q" class="qlangs"></div>
-    <div id="d-strip" class="strip"></div>
-    <div id="d-answers" class="answers"></div>
-  </section>
-
-  <section class="panel two">
-    <div>
-      <h2>Which languages disagree most</h2>
-      <div id="pairs"></div>
-    </div>
-    <div>
-      <h2>Drifting questions, by model</h2>
-      <div id="bymodel"></div>
-    </div>
-  </section>
-
-  <section class="panel method">
+  </div>
+  <div class="panel">
+    <h2>All results at a glance</h2>
+    <p class="sub"><span class="k k-red">red</span> the answer changed with the language · <span class="k k-amber">amber</span> refused in some languages only · <span class="k k-green">green</span> same answer everywhere · grey: not enough answers to compare. Click any square to replay it.</p>
+    <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+  </div>
+  <div class="panel method">
     <h2>How this was measured</h2>
     <div id="method"></div>
-  </section>
-</main>
-<footer class="foot">Built by Pothuri Sai Eswar &middot; Straive Innovation &middot; data and code: <a href="https://github.com/eshwarpotturi/language-drift">github.com/eshwarpotturi/language-drift</a></footer>
-<div id="tip" class="tip" role="tooltip" hidden></div>
+  </div>
+  <footer>Built by Pothuri Sai Eswar · Straive Innovation · data and code: <a href="https://github.com/eshwarpotturi/language-drift">github.com/eshwarpotturi/language-drift</a></footer>
+</section>
 <script src="app.js"></script>
 </body>
 </html>
