@@ -81,10 +81,11 @@ python -m pytest -q
 
 ## Dashboard
 
-`dashboard/` is a static page. It reads `data.json` and makes no AI calls. GitHub Pages publishes it on every push to `main` (`.github/workflows/pages.yml`). It has two layers:
+`dashboard/` is a static page. It reads `data.json` and makes no AI calls. GitHub Pages publishes it on every push to `main` (`.github/workflows/pages.yml`). It uses a light editorial theme with a dark mode that follows the system setting (toggle top right). It has three layers:
 
-1. **Story** (`story.js`), for non-technical readers: real cases where the same AI gave different advice by language, and how often each AI changed its advice.
-2. **Analyst view** (`analyst.js`): every model × question result as a gap (dumbbell) chart, which way the answers lean, and the method, with the full answers side by side.
+1. **At a glance** (`summary.js`): three charts under the headline showing how often the advice changed, which AI changed most, and refusals by language.
+2. **Story** (`story.js`), for non-technical readers: real cases where the same AI gave different advice by language, and how often each AI changed its advice.
+3. **Analyst view** (`analyst.js`): every model × question result as a gap (dumbbell) chart, which way the answers lean, and the method, with the full answers side by side.
 
 ## Repo layout
 
