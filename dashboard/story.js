@@ -91,14 +91,15 @@
     $('often-h').textContent = nHit ? `About 1 in ${ratio(nHit, total)} times, just changing the language changed the advice` : 'The language never changed the advice';
     const waffle = (list, title) => {
       const n = list.filter(hit).length;
-      const sorted = list.slice().sort((a, b) => (hit(b) - hit(a)) || (b.refusal_split - a.refusal_split));
+      const rank = (c) => (c.refusal_split && !c.flagged ? 0 : c.flagged ? 1 : c.drift == null ? 3 : 2);
+      const sorted = list.slice().sort((a, b) => rank(a) - rank(b));
       return `<div class="wf"><h3>${esc(title)}</h3><p class="big-n"><b>${n}</b> of ${list.length}${n ? ` <span>· about 1 in ${ratio(n, list.length)}</span>` : ''}</p>` +
         `<div class="squares" role="img" aria-label="${esc(n + ' of ' + list.length + ' changed')}">` +
-        sorted.map((c) => `<i class="${c.flagged ? 'r' : c.refusal_split ? 'a' : ''}" title="${esc(mById[c.model].label + ': ' + ((qById[c.qid].plain || {}).question || qById[c.qid].topic))}"></i>`).join('') + '</div></div>';
+        sorted.map((c) => `<i class="${c.flagged ? 'r' : c.refusal_split ? 'a' : c.drift == null ? 'n' : 'g'}" title="${esc(mById[c.model].label + ': ' + ((qById[c.qid].plain || {}).question || qById[c.qid].topic))}"></i>`).join('') + '</div></div>';
     };
     $('often').innerHTML = (work.length ? waffle(work, 'Workplace decisions (hiring, firing, pay, lending, pricing)') : '') +
       waffle(soc, 'Society and politics') +
-      `<p class="how">Each square is one AI answering one question in all three languages. <span class="kr">Red</span>: the advice changed with the language. <span class="ka">Amber</span>: it refused in one language but answered in another. <span class="kg">Grey</span>: same advice in every language. Each question was asked ${nRunsText(data)} per language so we could separate real changes from normal randomness.</p>`;
+      `<p class="how">Each square is one AI answering one question in all three languages. <span class="kr">Red</span>: the advice changed with the language. <span class="ka">Amber</span>: it refused in one language but answered in another. <span class="kg">Green</span>: same advice in every language.${answered.some((c) => !hit(c) && c.drift == null) ? ' <span class="kn">Grey</span>: not enough comparable answers.' : ''} Each question was asked ${nRunsText(data)} per language so we could separate real changes from normal randomness.</p>`;
 
     // ---------- 4: which AI ----------
     const byModel = M.map((m) => ({m, n: answered.filter((c) => c.model === m.id && hit(c)).length}))

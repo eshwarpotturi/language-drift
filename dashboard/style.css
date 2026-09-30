@@ -159,9 +159,9 @@ footer{color:var(--ink-3);font-size:12.5px;padding:4px 2px 20px}
 .big-n{margin:4px 0 10px;font-size:14px;color:var(--ink-3)}.big-n b{font:700 34px var(--display);color:var(--red)}.big-n span{color:var(--ink-2)}
 .squares{display:grid;grid-template-columns:repeat(15,minmax(0,1fr));gap:4px}
 .squares i{aspect-ratio:1;border-radius:3px;background:#2a3444}
-.squares i.r{background:var(--red)}.squares i.a{background:var(--amber)}
+.squares i.r{background:var(--red)}.squares i.a{background:var(--amber)}.squares i.g{background:#2f8f5b}.squares i.n{background:#2a3444}
 .how{grid-column:1/-1;margin:0;color:var(--ink-3);font-size:13px;max-width:90ch}
-.kr{color:var(--red);font-weight:600}.ka{color:var(--amber);font-weight:600}.kg{color:#8a96a8;font-weight:600}
+.kr{color:var(--red);font-weight:600}.ka{color:var(--amber);font-weight:600}.kg{color:#4cc285;font-weight:600}.kn{color:#8a96a8;font-weight:600}
 .models{display:grid;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
 .mrow{display:grid;grid-template-columns:190px minmax(0,1fr) 80px;gap:14px;align-items:center}
 .mrow .who b{display:block}.mrow .who small{color:var(--ink-3);font-size:12px}
