@@ -4,7 +4,7 @@
 
 **Pilot:** 20 questions (18 contested social and political questions plus 2 factual controls), each open-ended with one number, asked of 5 cheap-tier models (GPT-6 Luna, Claude Haiku 4.5, Gemini 3.8 Flash, DeepSeek V4.1 Flash, Qwen 3.8 Flash) in English, Hindi and Chinese, 3 runs each: 900 answers. A separate judge model (GPT-5.4 mini) scores each answer. Hard budget: ₹300.
 
-**Dashboard:** `dashboard/` is a static page that replays the logged run (it makes no AI calls) and is published with GitHub Pages.
+**Dashboard:** `dashboard/` is a static page (a plain-language story up front, full results for analysts below) that replays the logged run (it makes no AI calls) and is published with GitHub Pages.
 
 ## Run it
 

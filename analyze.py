@@ -120,7 +120,7 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
         "languages": qset["languages"],
         "models": models,
         "questions": [{"id": q["id"], "topic": q["topic"], "kind": q["kind"], "unit": q["unit"],
-                       "group": q.get("group", "society"), "scale_labels": q.get("scale_labels"),
+                       "group": q.get("group", "society"), "scale_labels": q.get("scale_labels"), "plain": q.get("plain"),
                        "expected": q["expected"], "question": q["question"], "number_prompt": q["number_prompt"]}
                       for q in qs],
         "cells": cells,

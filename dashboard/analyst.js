@@ -8,7 +8,7 @@
   const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-IN', {maximumFractionDigits: Math.abs(x) >= 100 ? 0 : 1}) : '—');
 
   fetch('data.json').then((r) => { if (!r.ok) throw new Error('data.json HTTP ' + r.status); return r.json(); })
-    .then(init).catch((e) => { $('hero').innerHTML = '<p>Could not load data.json: ' + esc(e.message) + '</p>'; });
+    .then(init).catch(() => {});
 
   // position of a value on its question's own scale, 0..1 (same rules as analyze.py)
   function pos(u, x) {
@@ -59,7 +59,7 @@
     // ---------- hero ----------
     const cells = Object.values(data.cells).filter((c) => qById[c.qid].kind !== 'control' && asked(c));
     const top = cells.filter((c) => c.flagged).sort((a, b) => b.drift - a.drift)[0];
-    if (top) {
+    if (top && $('hero')) {
       const q = qById[top.qid], m = mById[top.model];
       const ls = LANGS.filter((l) => top.langs[l].mean != null).sort((a, b) => top.langs[a].mean - top.langs[b].mean);
       const hiL = ls[ls.length - 1], loL = ls[0];
@@ -73,7 +73,7 @@
 
     // ---------- KPI cards ----------
     const topM = S.top_model;
-    $('kpis').innerHTML =
+    if ($('kpis')) $('kpis').innerHTML =
       `<div class="kcard"><div class="kl">Answers that changed with the language</div><div class="kv red">${S.pairs_drifting}<small> of ${S.pairs_tested} model–question pairs</small></div>` +
       `<div class="ks">${Math.round(S.share_drifting * 100)}% of the time, switching language alone changed the answer</div></div>` +
       `<div class="kcard"><div class="kl">Most language-sensitive model</div><div class="kv">${esc(topM ? mById[topM].label : '—')}<small> ${topM ? S.drift_by_model[topM] + ' of ' + Qa.length + ' questions' : ''}</small></div>` +

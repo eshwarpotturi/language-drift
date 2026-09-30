@@ -4,52 +4,82 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Language Drift</title>
-<meta name="description" content="Same question, same AI model, asked in English, Hindi and Chinese. One chart shows where the answer changes with the language.">
+<meta name="description" content="We asked five popular AI assistants the same questions in English, Hindi and Chinese. Sometimes the advice flipped with the language.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="bar">
-  <h1>Language Drift <span>same question · same AI · three languages</span></h1>
-  <div class="legend" aria-label="Colour key">
-    <span><i class="dot d-en"></i>asked in English</span><span><i class="dot d-hi"></i>asked in Hindi</span><span><i class="dot d-zh"></i>asked in Chinese</span>
-  </div>
-</header>
+<main class="story">
+  <header class="intro">
+    <p class="eyebrow">AI in the workplace · a test of five popular AI assistants</p>
+    <h1>Would your company's AI give the same advice in every language?</h1>
+    <p class="lede" id="lede">We asked five popular AI assistants the same questions in English, Hindi and Chinese. Same AI, same question, only the language changed. Sometimes the advice flipped.</p>
+  </header>
 
-<main>
-  <section class="hero" id="hero" aria-label="Headline finding"></section>
-  <section class="kpis" id="kpis" aria-label="Key results"></section>
+  <section class="step">
+    <p class="num">1 · One question, three answers</p>
+    <div id="hero-card"></div>
+  </section>
 
-  <section class="panel chart" aria-labelledby="chart-h">
-    <div class="chart-head">
-      <div>
-        <h2 id="chart-h">Where the language changes the answer</h2>
-        <p class="sub" id="chart-sub">Each row is one question; each thin line is one model. The three dots on a line are that model's answers in English, Hindi and Chinese, on the question's own scale. <b>A long red bar means the language changed the answer.</b> Click a row, or pick one model, to read the answers.</p>
-      </div>
-      <div class="filters">
-        <div class="seg" role="tablist" aria-label="Question set" id="f-group"></div>
-        <div class="seg" role="tablist" aria-label="Model" id="f-model"></div>
-      </div>
+  <section class="step">
+    <p class="num">2 · It wasn't a one-off</p>
+    <h2>More cases where the same AI gave different advice</h2>
+    <div id="cards" class="cards"></div>
+  </section>
+
+  <section class="step">
+    <p class="num">3 · How often does it happen?</p>
+    <h2 id="often-h"></h2>
+    <div id="often" class="often"></div>
+  </section>
+
+  <section class="step">
+    <p class="num">4 · Which AI is most affected?</p>
+    <h2>Out of 30 questions, how many times did each AI change its advice with the language?</h2>
+    <div id="models" class="models"></div>
+  </section>
+
+  <section class="step">
+    <p class="num">5 · What this means for a business</p>
+    <div class="takeaways">
+      <div class="tk"><b>Test your AI in every language your people use.</b><span>An assistant that behaves well in English may give different advice in Hindi or Chinese. Check it the way you'd check a new policy document in translation.</span></div>
+      <div class="tk"><b>Keep a person on the big decisions.</b><span>The biggest differences showed up on hiring, firing, lending and pricing. Use AI to draft and explain, and let a person decide.</span></div>
+      <div class="tk"><b>Re-check whenever you switch AI.</b><span>Some AIs were steady across languages and others were not. The choice of AI matters, so test before you roll out a new one.</span></div>
     </div>
-    <div class="axis" aria-hidden="true"><span></span><span class="ax"><i>low end of the scale</i><i>high end</i></span><span></span></div>
-    <div id="rows" class="rows"></div>
   </section>
 
-  <section class="panel lean" aria-labelledby="lean-h">
-    <h2 id="lean-h">Which way the answers lean</h2>
-    <p class="sub">Average of all five models: how far the Hindi and Chinese answers sit from the English one on each question, largest shifts first.</p>
-    <div id="lean"></div>
-  </section>
-
-  <section class="panel method">
-    <h2>How this was measured</h2>
-    <div id="method"></div>
-  </section>
+  <details class="analyst" id="analyst">
+    <summary>For analysts: every question, every AI, and how this was measured</summary>
+    <section class="panel chart" aria-labelledby="chart-h">
+      <div class="chart-head">
+        <div>
+          <h2 id="chart-h">All results</h2>
+          <p class="sub">Each row is one question; each thin line is one AI. The three dots on a line are its average answers in <span class="k-en">English</span>, <span class="k-hi">Hindi</span> and <span class="k-zh">Chinese</span>, on the question's own 0–10 or 0–100% scale. A long red bar means the language changed the answer beyond normal run-to-run variation. Click a row to read the answers.</p>
+        </div>
+        <div class="filters">
+          <div class="seg" role="tablist" aria-label="Question set" id="f-group"></div>
+          <div class="seg" role="tablist" aria-label="Model" id="f-model"></div>
+        </div>
+      </div>
+      <div class="axis" aria-hidden="true"><span></span><span class="ax"><i>low end of the scale</i><i>high end</i></span><span></span></div>
+      <div id="rows" class="rows"></div>
+    </section>
+    <section class="panel lean">
+      <h2>Which way the answers lean</h2>
+      <p class="sub">Average of all five AIs: how far the Hindi and Chinese answers sit from the English one on each question, largest shifts first.</p>
+      <div id="lean"></div>
+    </section>
+    <section class="panel method">
+      <h2>How this was measured</h2>
+      <div id="method"></div>
+    </section>
+  </details>
   <footer>Built by Pothuri Sai Eswar · Straive Innovation · data and code: <a href="https://github.com/eshwarpotturi/language-drift">github.com/eshwarpotturi/language-drift</a></footer>
 </main>
 <div id="tip" class="tip" role="tooltip" hidden></div>
-<script src="app.js"></script>
+<script src="story.js"></script>
+<script src="analyst.js"></script>
 </body>
 </html>

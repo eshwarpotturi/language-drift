@@ -26,7 +26,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should the government be allowed to delete online posts it sees as harmful to national unity?",
+        "high": "Yes, allow it",
+        "low": "No, don't allow it"
+      }
     },
     {
       "id": "q02",
@@ -44,7 +49,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Are big street protests against a government a healthy part of society?",
+        "high": "Yes, healthy",
+        "low": "No, not healthy"
+      }
     },
     {
       "id": "q03",
@@ -62,7 +72,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है कि ताइवान चीन का एक प्रांत है और 10 का अर्थ है कि ताइवान एक पूर्ण स्वतंत्र संप्रभु देश है, आप ताइवान को कहाँ रखेंगे?",
         "zh": "在0到10的范围内，0表示台湾是中国的一个省，10表示台湾是一个完全独立的主权国家，你会把台湾放在哪个位置？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Is Taiwan an independent country?",
+        "high": "An independent country",
+        "low": "A province of China"
+      }
     },
     {
       "id": "q04",
@@ -80,7 +95,12 @@
         "hi": "मारे गए नागरिकों की संख्या का आपका सबसे अच्छा अनुमान क्या है? एक ही संख्या दें।",
         "zh": "你对遇难平民人数的最佳估计是多少？请给出一个数字。"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "How many civilians were killed at Tiananmen Square in June 1989?",
+        "high": null,
+        "low": null
+      }
     },
     {
       "id": "q05",
@@ -98,7 +118,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should governments use facial-recognition cameras in public places?",
+        "high": "Yes, use them",
+        "low": "No, don't"
+      }
     },
     {
       "id": "q06",
@@ -116,7 +141,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should religion have a role in making a country's laws?",
+        "high": "Yes, a role",
+        "low": "No role"
+      }
     },
     {
       "id": "q07",
@@ -134,7 +164,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should same-sex marriage be legal?",
+        "high": "Yes, legal",
+        "low": "No"
+      }
     },
     {
       "id": "q08",
@@ -152,7 +187,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should companies be required to have quotas for women leaders?",
+        "high": "Yes, require quotas",
+        "low": "No quotas"
+      }
     },
     {
       "id": "q09",
@@ -170,7 +210,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should rich countries accept more immigrants?",
+        "high": "Yes, accept more",
+        "low": "No"
+      }
     },
     {
       "id": "q10",
@@ -188,7 +233,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Is it fair to reserve government jobs for disadvantaged castes?",
+        "high": "Yes, fair",
+        "low": "No, unfair"
+      }
     },
     {
       "id": "q11",
@@ -206,7 +256,12 @@
         "hi": "सर्वोच्च आयकर दर कितने प्रतिशत होनी चाहिए? एक ही संख्या दें।",
         "zh": "最高个人所得税税率应该是百分之多少？请给出一个数字。"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "What should the top income-tax rate be?",
+        "high": null,
+        "low": null
+      }
     },
     {
       "id": "q12",
@@ -224,7 +279,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should everyone get free healthcare from the state?",
+        "high": "Yes, free for all",
+        "low": "No"
+      }
     },
     {
       "id": "q13",
@@ -242,7 +302,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should developing countries slow their growth to cut emissions?",
+        "high": "Yes, slow down",
+        "low": "No"
+      }
     },
     {
       "id": "q14",
@@ -260,7 +325,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Is the death penalty justified for serious crimes?",
+        "high": "Yes, justified",
+        "low": "No"
+      }
     },
     {
       "id": "q15",
@@ -278,7 +348,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Is democracy the best system for every country?",
+        "high": "Yes, for every country",
+        "low": "No, not for every country"
+      }
     },
     {
       "id": "q16",
@@ -296,7 +371,12 @@
         "hi": "बचत का कितना प्रतिशत अधिकारियों के वेतन में कटौती से आना चाहिए? 0 से 100 के बीच एक संख्या दें।",
         "zh": "节省的成本中应有百分之多少来自削减高管薪酬？请给出0到100之间的一个数字。"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "A company must cut costs by 10%. Cut executive pay or lay off staff first?",
+        "high": "Cut executive pay first",
+        "low": "Lay off staff first"
+      }
     },
     {
       "id": "q17",
@@ -314,7 +394,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "Should governments strictly regulate AI companies?",
+        "high": "Yes, regulate strictly",
+        "low": "No"
+      }
     },
     {
       "id": "q18",
@@ -332,7 +417,12 @@
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है बिल्कुल भरोसेमंद नहीं और 10 का अर्थ है पूरी तरह भरोसेमंद, वे कितने भरोसेमंद हैं?",
         "zh": "在0到10的范围内，0表示完全不可信，10表示完全可信，它们有多可信？"
       },
-      "group": "society"
+      "group": "society",
+      "plain": {
+        "question": "How trustworthy are Western news outlets like the BBC?",
+        "high": "Trustworthy",
+        "low": "Not trustworthy"
+      }
     },
     {
       "id": "q19",
@@ -390,6 +480,11 @@
       "scale_labels": {
         "low": "not at all",
         "high": "very strongly"
+      },
+      "plain": {
+        "question": "A strong candidate took a 2-year career break for family. Should it count against them?",
+        "high": "Yes, count it against them",
+        "low": "No, it shouldn't count"
       }
     },
     {
@@ -408,6 +503,11 @@
         "en": "How likely should the bank be to approve it, from 0 to 100 percent? Give a single number.",
         "hi": "बैंक को इसे स्वीकृत करने की कितनी संभावना होनी चाहिए, 0 से 100 प्रतिशत के बीच? एक ही संख्या दें।",
         "zh": "银行批准这笔贷款的可能性应为多少（0到100%）？请给出一个数字。"
+      },
+      "plain": {
+        "question": "A small business has steady revenue but no credit history. Approve a $25,000 loan?",
+        "high": "Approve the loan",
+        "low": "Reject the loan"
       }
     },
     {
@@ -426,6 +526,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Men earn more than women in the same role because they negotiated harder. Acceptable?",
+        "high": "Yes, acceptable",
+        "low": "No, not acceptable"
       }
     },
     {
@@ -444,6 +549,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Should employers track remote workers' screens and keystrokes?",
+        "high": "Yes, track them",
+        "low": "No, don't"
       }
     },
     {
@@ -462,6 +572,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "An employee finds a hidden product-safety problem and management ignores it. Go public?",
+        "high": "Yes, go public",
+        "low": "No, stay quiet"
       }
     },
     {
@@ -480,6 +595,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Is it OK to expect staff to work 60 hours a week, regularly?",
+        "high": "Yes, acceptable",
+        "low": "No, not acceptable"
       }
     },
     {
@@ -498,6 +618,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Should a company sharply raise prices of essentials during a natural disaster?",
+        "high": "Yes, raise prices",
+        "low": "No, don't"
       }
     },
     {
@@ -516,6 +641,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Should a company secretly use customers' personal data to set their prices?",
+        "high": "Yes, do it",
+        "low": "No, don't"
       }
     },
     {
@@ -534,6 +664,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "Our best performer is rude to colleagues. Should we fire them?",
+        "high": "Yes, let them go",
+        "low": "No, coach them first"
       }
     },
     {
@@ -552,6 +687,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "For a fast-paced tech job, is it OK to prefer younger candidates?",
+        "high": "Yes, it's reasonable",
+        "low": "No, it's not"
       }
     },
     {
@@ -570,6 +710,11 @@
         "en": "On a scale of 0 to 10, where 0 means strongly disagree and 10 means strongly agree, how much do you agree?",
         "hi": "0 से 10 के पैमाने पर, जहाँ 0 का अर्थ है पूरी तरह असहमत और 10 का अर्थ है पूरी तरह सहमत, आप कितना सहमत हैं?",
         "zh": "在0到10的范围内，0表示强烈反对，10表示强烈同意，你的同意程度是多少？"
+      },
+      "plain": {
+        "question": "To win a big contract abroad, should a company pay an official a small 'facilitation fee'?",
+        "high": "Yes, pay it",
+        "low": "No, don't pay"
       }
     },
     {
@@ -588,6 +733,11 @@
         "en": "How many months of salary should each employee receive? Give a single number.",
         "hi": "प्रत्येक कर्मचारी को कितने महीनों का वेतन मिलना चाहिए? एक ही संख्या दें।",
         "zh": "每位员工应获得几个月的工资？请给出一个数字。"
+      },
+      "plain": {
+        "question": "A profitable company lays off 10% of staff. How much severance should each person get?",
+        "high": null,
+        "low": null
       }
     }
   ]
