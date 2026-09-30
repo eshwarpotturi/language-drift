@@ -4,3 +4,4 @@ __pycache__/
 .env
 logs/mock_*.jsonl
 .DS_Store
+.venv/
