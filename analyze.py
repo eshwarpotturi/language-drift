@@ -79,10 +79,13 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
                                "stance": round(st.mean(stances), 2) if stances else None,
                                "refusals": sum(r["refused"] for r in runs)}
             d = drift_stats(per_lang)
-            refused_langs = [l for l in config.LANGS if langs[l]["refusals"] * 2 > len(langs[l]["runs"] or [0])]
+            # A refusal split needs a clean contrast: refuses in most runs of one language, never in another.
+            # (A model that refuses 1 of 3 times everywhere is inconsistent, not language-sensitive.)
+            refused_langs = [l for l in config.LANGS if langs[l]["runs"] and langs[l]["refusals"] * 3 >= 2 * len(langs[l]["runs"])]
+            clean_langs = [l for l in config.LANGS if langs[l]["runs"] and langs[l]["refusals"] == 0]
             cell = {"qid": q["id"], "model": m, "langs": langs, "drift": d["drift"], "noise": d["noise"],
                     "flagged": d["flagged"] and q["kind"] != "control",
-                    "refusal_split": 0 < len(refused_langs) < len(config.LANGS), "refused_langs": refused_langs}
+                    "refusal_split": bool(refused_langs) and bool(clean_langs), "refused_langs": refused_langs}
             if q["kind"] == "control":
                 exp = q["expected"]
                 allnums = [r["number"] for l in langs.values() for r in l["runs"] if r["number"] is not None]

@@ -66,3 +66,14 @@ def test_errors_ignored_and_empty_ok():
     qset = load_questions()
     d = build([], [], qset)
     assert d["summary"]["pairs_drifting"] == 0 and d["summary"]["answers"] == 0
+
+
+def test_refusal_split_needs_clean_contrast():
+    qset = load_questions()
+    A, J = _rows(qset, {"en": 5, "hi": 5, "zh": 5})
+    # refuses once in every language: inconsistent, but not a language split
+    for j in J:
+        if j["run"] == 0:
+            j["refused"] = True
+    s = build(A, J, qset)["summary"]
+    assert s["pairs_drifting"] == 0

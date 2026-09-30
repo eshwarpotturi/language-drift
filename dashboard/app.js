@@ -58,6 +58,20 @@
       `<div class="card"><div class="k">Sanity checks</div><div class="v">${S.controls_ok}<small> / ${S.controls_total}</small></div>` +
       `<div class="s">factual controls stayed identical across languages · ${S.answers} answers · ₹${fmt(S.cost_inr, 0)} total</div></div>`;
 
+    // ---------- biggest shifts ----------
+    const unitSuffix = (u) => (u === 'percent' ? '%' : /0_10$/.test(u) ? '/10' : '');
+    const tops = Object.values(data.cells).filter((c) => c.flagged || c.refusal_split)
+      .sort((a, b) => (b.refusal_split && !b.drift ? 0.35 : b.drift || 0) - (a.refusal_split && !a.drift ? 0.35 : a.drift || 0)).slice(0, 6);
+    $('top').innerHTML = tops.length ? tops.map((c) => {
+      const q = qById[c.qid], m = mById[c.model];
+      return `<button class="shift" data-k="${esc(c.model + '|' + c.qid)}"><span class="who">${esc(m.label)} · ${esc(q.topic)}<small>${esc(q.question.en)}</small></span>` +
+        '<span class="vals">' + LANGS.map((l) => {
+          const L = c.langs[l], refused = c.refused_langs.includes(l);
+          return `<span><i class="dot d-${l}"></i>${LNAME[l]} ${refused ? '<em>refuses</em>' : '<b>' + esc(fmt(L.mean, 0)) + '</b>' + unitSuffix(q.unit)}</span>`;
+        }).join('') + '</span></button>';
+    }).join('') : '<p class="hint">No model changed its answer beyond normal variation.</p>';
+    $('top').addEventListener('click', (ev) => { const b = ev.target.closest('.shift'); if (b) show(b.dataset.k, true); });
+
     // ---------- grid ----------
     const grid = $('grid');
     grid.style.gridTemplateColumns = `minmax(150px,220px) repeat(${M.length}, minmax(76px,1fr))`;
