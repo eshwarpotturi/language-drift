@@ -28,6 +28,8 @@
     <p class="lede" id="lede">We asked five popular AI assistants the same questions in English, Hindi and Chinese. Same AI, same question, only the language changed. Sometimes the advice flipped.</p>
   </header>
 
+  <section class="answers" id="answers" aria-label="Every answer, colour coded"></section>
+
   <section class="glance" id="glance" aria-label="Results at a glance"></section>
 
   <section class="step">
@@ -63,7 +65,7 @@
     </div>
   </section>
 
-  <details class="analyst" id="analyst">
+  <details class="analyst" id="analyst" open>
     <summary>For analysts: every question, every AI, and how this was measured</summary>
     <section class="panel chart" aria-labelledby="chart-h">
       <div class="chart-head">
@@ -103,6 +105,7 @@
     label();
   })();
 </script>
+<script src="answers.js"></script>
 <script src="story.js"></script>
 <script src="analyst.js"></script>
 <script src="summary.js"></script>
