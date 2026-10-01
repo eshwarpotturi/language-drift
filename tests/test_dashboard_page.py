@@ -28,3 +28,8 @@ def test_detailed_results_open_by_default():
 def test_answer_colours_match_data():
     out = subprocess.run(["node", str(Path(__file__).with_name("answers_check.mjs"))], capture_output=True, text=True)
     assert out.returncode == 0, out.stdout + out.stderr
+
+
+def test_answer_table_starts_on_changed_filter():
+    js = (DASH / "answers.js").read_text(encoding="utf-8")
+    assert "let filter = 'changed';" in js

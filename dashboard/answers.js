@@ -70,7 +70,7 @@
 
     const total = items.reduce((s, x) => s + x.cs.length, 0);
     const nChanged = items.reduce((s, x) => s + x.n, 0);
-    let filter = 'all';
+    let filter = 'changed';
 
     function scaleNote(q) {
       const p = q.plain || {};
@@ -100,18 +100,20 @@
       const shown = items.filter((x) => filter === 'all' || (filter === 'changed' ? x.n > 0 : (x.q.group || 'society') === filter));
       document.getElementById('at-list').innerHTML = shown.map(block).join('');
     }
-    const chips = [['all', 'All 30 questions'], ['changed', 'Only where an AI changed'], ['workplace', 'Workplace'], ['society', 'Society & politics']];
+    const chips = [['all', `All ${items.length} questions`], ['changed', 'Only where an AI changed'], ['workplace', 'Workplace'], ['society', 'Society & politics']];
     el.innerHTML =
       `<div class="at-head"><h2>Every question, every AI, all three languages</h2>` +
       `<p class="sub">Each table is one question. Each row is one AI’s answer in English, Hindi and Chinese. ` +
       `<span class="key key-green">Green</span> the answers agree. <span class="key key-red">Red</span> the odd one out: the language where the AI changed its advice, or refused. ` +
       `${nChanged} of ${total} rows have a red answer.</p>` +
+      `<p class="sub at-showing">Showing the ${items.filter((x) => x.n > 0).length} questions where at least one AI changed its answer. Pick “All ${items.length} questions” to see the rest.</p>` +
       `<div class="seg at-chips" role="tablist" aria-label="Filter questions">` +
       chips.map(([k, lab]) => `<button role="tab" data-k="${k}" aria-selected="${k === filter}">${esc(lab)}</button>`).join('') + `</div></div>` +
       `<div id="at-list" class="at-list"></div>`;
     el.querySelector('.at-chips').addEventListener('click', (ev) => {
       const b = ev.target.closest('button'); if (!b) return;
       filter = b.dataset.k;
+      el.querySelector('.at-showing').hidden = filter !== 'changed';
       el.querySelectorAll('.at-chips button').forEach((x) => x.setAttribute('aria-selected', x === b));
       draw();
     });
