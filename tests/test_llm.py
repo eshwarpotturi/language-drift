@@ -30,6 +30,7 @@ def test_price_from_config():
 def test_every_model_has_a_price_and_effort():
     for mid, m in llm.all_models().items():
         assert m["input"] > 0 and m["output"] > 0 and m["effort"] == "low", mid
+    assert llm.all_models()["openai/gpt-5.4-nano"]["route"] == "openai"
 
 
 def test_missing_key_is_a_clear_error(monkeypatch):

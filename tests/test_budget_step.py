@@ -18,3 +18,14 @@ def test_per_step_budget_stops(tmp_path):
     with pytest.raises(BudgetExceeded):
         for _ in range(20):
             g.record(0.01)   # projects $8
+
+
+def test_per_step_budget_carries_over_between_chunks(tmp_path):
+    led = Ledger(tmp_path / "s.json")
+    g1 = Guard(led, "answers-bn", total_calls=10, budget_usd=1.0, after_calls=50, per_step=True)
+    for _ in range(9):
+        g1.record(0.1)                       # $0.90 in the first chunk
+    g2 = Guard(led, "answers-bn", total_calls=10, budget_usd=1.0, after_calls=50, per_step=True)
+    g2.record(0.05)
+    with pytest.raises(BudgetExceeded):
+        g2.record(0.1)                       # $1.05 across both chunks

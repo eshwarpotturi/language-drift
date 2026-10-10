@@ -33,7 +33,8 @@ class Guard:
         self.ledger, self.step = ledger, step
         self.total_calls, self.budget, self.after = total_calls, budget_usd, after_calls
         self.done, self.spent = 0, 0.0
-        self.start_total = 0.0 if per_step else ledger.total
+        # per step: count what this step already spent in earlier (interrupted or chunked) runs
+        self.start_total = ledger.by_step.get(step, 0.0) if per_step else ledger.total
         self.per_step = per_step
 
     def projection(self):
@@ -45,7 +46,7 @@ class Guard:
         self.done += 1
         self.spent += usd
         self.ledger.add(self.step, usd)
-        so_far = self.spent if self.per_step else self.ledger.total
+        so_far = self.start_total + self.spent if self.per_step else self.ledger.total
         if so_far > self.budget:
             raise BudgetExceeded(f"spent ${so_far:.3f} > budget ${self.budget:.2f}")
         if self.done == self.after and self.projection() > self.budget:

@@ -26,6 +26,7 @@ def test_new_language_jobs_only():
     jobs = build_jobs(load_questions(), langs=["bn"])
     assert {j["lang"] for j in jobs} == {"bn"}
     assert len(jobs) == (30 * config.RUNS + 2 * config.CONTROL_RUNS_NEW) * len(config.MODELS)
+    assert len(config.MODELS) == 6
 
 
 def test_bengali_korean_prompts_have_their_script():

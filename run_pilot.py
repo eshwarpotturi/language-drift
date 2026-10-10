@@ -102,6 +102,7 @@ def main():
     ap.add_argument("--limit", type=int)
     ap.add_argument("--models", nargs="*")
     ap.add_argument("--runs", type=int, default=config.RUNS)
+    ap.add_argument("--step", help="name for this step's budget in logs/spend.json")
     ap.add_argument("--langs", nargs="*", help="e.g. --langs bn (default: every language)")
     ap.add_argument("--budget-inr", type=float, default=config.STEP_BUDGET_INR["answers"],
                     help="hard stop for this run, in INR")
@@ -113,7 +114,7 @@ def main():
               f"({len(a.models or config.MODELS)} models, {a.runs} runs; new languages ask the controls once)")
         print(answer_prompt(qset, qset["questions"][0], (a.langs or ["hi"])[0]))
         return
-    step = "answers-" + "-".join(a.langs) if a.langs else "answers"
+    step = a.step or ("answers-" + "-".join(a.langs) if a.langs else "answers")
     print(f"hard stop: ₹{a.budget_inr:.0f} (${a.budget_inr / config.USD_TO_INR:.2f}) for this run")
     asyncio.run(run(jobs, qset, a.budget_inr / config.USD_TO_INR, a.limit, step=step, per_step=True))
 

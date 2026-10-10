@@ -46,7 +46,10 @@ async def main():
     ledger = Ledger(config.SPEND_FILE)
     budget_inr = float(sys.argv[sys.argv.index("--budget-inr") + 1]) if "--budget-inr" in sys.argv else config.STEP_BUDGET_INR["judge"]
     print(f"hard stop: ₹{budget_inr:.0f} for this judging run")
-    guard = Guard(ledger, "judge", len(todo), budget_inr / config.USD_TO_INR, config.GUARD_AFTER_CALLS, per_step=True)
+    step = sys.argv[sys.argv.index("--step") + 1] if "--step" in sys.argv else "judge-new"
+    limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else None
+    todo = todo[:limit]
+    guard = Guard(ledger, step, len(todo), budget_inr / config.USD_TO_INR, config.GUARD_AFTER_CALLS, per_step=True)
     sem, stop = asyncio.Semaphore(config.CONCURRENCY), asyncio.Event()
     print(f"{len(todo)} answers to judge; spent so far ${ledger.total:.3f}")
     async with httpx.AsyncClient() as client:
