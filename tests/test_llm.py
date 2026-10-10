@@ -10,6 +10,12 @@ def test_calls_go_to_foundry_openrouter_route(monkeypatch):
     assert llm.base_url() == "https://llmfoundry.straivedemo.com/openrouter/v1"
 
 
+def test_default_is_straight_to_openrouter(monkeypatch):
+    monkeypatch.delenv("LLM_PROVIDER", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "x")
+    assert llm.base_url() == "https://openrouter.ai/api/v1"
+
+
 def test_no_cache_header_is_sent():
     assert llm.NO_CACHE == {"Cache-Control": "no-cache"}
 
