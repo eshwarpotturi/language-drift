@@ -1,5 +1,11 @@
 {
   "answers": 2.7755057992099936,
-  "backtranslate": 0.055846500000000014,
-  "judge": 1.5580342500000053
+  "backtranslate": 0.10637409999999994,
+  "judge": 1.5580342500000053,
+  "route_check": 0.026479999999999997,
+  "answers-bn-claude-gemini": 1.2871515,
+  "judge-bn": 0.2261902500000001,
+  "answers-ko-claude-gemini": 1.02146875,
+  "answers-nano": 0.1701422499999999,
+  "judge-ko-nano": 0.7748219999999999
 }
