@@ -29,7 +29,7 @@ from openai import APIError, OpenAI, RateLimitError
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env", override=True)  # .env wins over stale shell variables
 CONFIG = yaml.safe_load((ROOT / "config" / "models.yaml").read_text())
-TIMEOUT = 600
+TIMEOUT = 120
 NO_CACHE = {"Cache-Control": "no-cache"}
 
 # LLM_PROVIDER -> (root URL, key). Default "openrouter": straight to OpenRouter with your own key,

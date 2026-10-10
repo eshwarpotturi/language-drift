@@ -88,8 +88,8 @@ async def run(jobs, qset, budget_usd, limit=None, step="answers", per_step=False
                 except BudgetExceeded as e:
                     print("STOPPING:", e)
                     stop.set()
-                if guard.done % 50 == 0:
-                    print(f"  {guard.done}/{len(todo)} · spent ${ledger.total:.3f} · projected ${guard.projection():.3f}")
+                if guard.done % 20 == 0:
+                    print(f"  {guard.done}/{len(todo)} · spent ${ledger.total:.3f} · projected ${guard.projection():.3f}", flush=True)
 
         await asyncio.gather(*(one(j) for j in todo))
     print(f"done. total spent ${ledger.total:.3f} (≈ ₹{ledger.total * config.USD_TO_INR:.0f})")
