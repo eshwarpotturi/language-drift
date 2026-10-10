@@ -111,6 +111,11 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
                 gaps.append(abs(normalise(q["unit"], ma) - normalise(q["unit"], mb)))
         pair_gaps[f"{a}-{b}"] = round(st.mean(gaps), 4) if gaps else None
     refusals = {l: sum(c["langs"][l]["refusals"] for c in test) for l in config.LANGS}
+    # Like-for-like refusals: only the models asked in every language (others would skew the newer languages).
+    full = [m for m in mids if all(any(c["langs"][l]["runs"] for c in test if c["model"] == m) for l in config.LANGS)]
+    refusals_full = {l: sum(c["langs"][l]["refusals"] for c in test if c["model"] in full) for l in config.LANGS}
+    answers_full = {l: sum(len(c["langs"][l]["runs"]) for c in test if c["model"] in full) for l in config.LANGS}
+    langs_by_model = {m: [l for l in config.LANGS if any(c["langs"][l]["runs"] for c in test if c["model"] == m)] for m in mids}
     controls = [c for c in cell_list if "control_ok" in c]
     n_calls = len([a for a in answers if not a.get("error")])
     top_model = max(by_model, key=by_model.get) if flagged else None
@@ -130,6 +135,7 @@ def build(answers, judged, qset, spend_usd=0.0, mock=False):
             "drift_by_model": by_model, "drift_by_question": by_q,
             "top_model": top_model, "top_question": top_q,
             "language_pair_gap": pair_gaps, "refusals_by_language": refusals,
+            "full_models": full, "refusals_full": refusals_full, "answers_full": answers_full, "langs_by_model": langs_by_model,
             "controls_ok": sum(c["control_ok"] for c in controls), "controls_total": len(controls),
             "answers": n_calls, "cost_usd": round(spend_usd, 4), "cost_inr": round(spend_usd * config.USD_TO_INR, 1),
             "thresholds": {"drift_min": config.DRIFT_MIN, "noise_factor": config.NOISE_FACTOR},

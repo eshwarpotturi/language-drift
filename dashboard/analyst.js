@@ -2,8 +2,7 @@
   'use strict';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
-  const LANGS = ['en', 'hi', 'zh'];
-  const LNAME = {en: 'English', hi: 'Hindi', zh: 'Chinese'};
+  const {LANGS, LANG: LNAME} = window.LD_LANGS;
   const mean = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : null);
   const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-IN', {maximumFractionDigits: Math.abs(x) >= 100 ? 0 : 1}) : '—');
 
@@ -51,7 +50,7 @@
     const qById = Object.fromEntries(data.questions.map((q) => [q.id, q]));
     const mById = Object.fromEntries(M.map((m) => [m.id, m]));
     const cell = (m, q) => data.cells[m + '|' + q];
-    const asked = (c) => c && LANGS.some((l) => c.langs[l].runs.length);
+    const asked = (c) => c && LANGS.some((l) => c.langs[l] && c.langs[l].runs.length);
     const Qa = Q.filter((q) => M.some((m) => asked(cell(m.id, q.id))));   // questions with answers
     const hasWork = Qa.some((q) => q.group === 'workplace');
     const nRuns = Math.max(1, ...Object.values(data.cells).flatMap((c) => LANGS.map((l) => c.langs[l].runs.length)));
@@ -79,8 +78,8 @@
       `<div class="kcard"><div class="kl">Most language-sensitive model</div><div class="kv">${esc(topM ? mById[topM].label : '—')}<small> ${topM ? S.drift_by_model[topM] + ' of ' + Qa.length + ' questions' : ''}</small></div>` +
       `<div class="ks">${topM ? esc(mById[topM].maker) : 'no model changed its answers'} · least: ${esc(M.slice().sort((a, b) => S.drift_by_model[a.id] - S.drift_by_model[b.id])[0].label)}</div></div>` +
       `<div class="kcard"><div class="kl">Refused to answer</div><div class="langrow">` +
-      LANGS.map((l) => `<span><i class="dot d-${l}"></i><b>${S.refusals_by_language[l]}</b>${LNAME[l]}</span>`).join('') +
-      `</div><div class="ks">times a model declined to answer, per language</div></div>`;
+      LANGS.map((l) => `<span><i class="dot d-${l}"></i><b>${(S.refusals_full || S.refusals_by_language)[l]}</b>${LNAME[l]}</span>`).join('') +
+      `</div><div class="ks">times declined, per language (the AIs asked in all five)</div></div>`;
 
     // ---------- filters ----------
     let group = 'all', model = 'all', open = null;
@@ -90,7 +89,7 @@
       el.onclick = (ev) => { const b = ev.target.closest('button'); if (!b) return; set(b.dataset.k); el.querySelectorAll('button').forEach((x) => x.setAttribute('aria-selected', x === b)); open = null; draw(); };
     }
     seg($('f-group'), groups, () => group, (k) => { group = k; });
-    seg($('f-model'), [['all', 'All 5 models']].concat(M.map((m) => [m.id, m.label])), () => model, (k) => { model = k; });
+    seg($('f-model'), [['all', `All ${M.length} models`]].concat(M.map((m) => [m.id, m.label])), () => model, (k) => { model = k; });
 
     // ---------- the dumbbell rows ----------
     function rowData(q) {
@@ -158,13 +157,13 @@
             const cls = c.flagged ? 'red' : c.refusal_split ? 'amber' : 'same';
             const txt = c.flagged ? 'changed' : c.refusal_split ? 'refused in ' + listLangs(c.refused_langs) : 'same';
             return `<div class="row" role="presentation"><span class="t"><b>${esc(m.label)}</b><small>${esc(m.maker)} · ` +
-              LANGS.map((l) => LNAME[l].slice(0, 2).toUpperCase() + ' ' + esc(val(q, v[l]))).join(' · ') + `</small></span>` +
+              LANGS.filter((l) => c.langs[l].runs.length).map((l) => LNAME[l].slice(0, 2).toUpperCase() + ' ' + esc(val(q, v[l]))).join(' · ') + `</small></span>` +
               trackHtml(q, v, c.refused_langs, c.flagged) + `<span class="verdict v-${cls}">${esc(txt)}</span></div>`;
           }).join('') + `</div><p class="sub">Pick one model above to read its actual answers.</p></div>`;
       }
       const c = cell(model, q.id);
       return `<div class="detail"><p class="qfull">${esc(q.question.en)} <span class="sub">(${esc(scaleWords(q))})</span></p><div class="ans3">` +
-        LANGS.map((l) => {
+        LANGS.filter((l) => c.langs[l].runs.length).map((l) => {
           const L = c.langs[l], run = pickRun(L), refused = c.refused_langs.includes(l);
           return `<div class="ans ${l}"><h3><span><i class="dot d-${l}"></i> Asked in ${LNAME[l]}</span>` +
             `<b>${refused ? '<span class="ref">refused</span>' : esc(val(q, L.mean))}</b></h3>` +
@@ -186,7 +185,7 @@
       const v = mid ? Object.fromEntries(LANGS.map((l) => [l, cell(mid, q.id).langs[l].mean])) : rowData(q).v;
       const c = mid ? cell(mid, q.id) : null;
       tip.innerHTML = `<b>${esc(q.topic)} · ${mid ? esc(mById[mid].label) : 'average of models'}</b>` +
-        LANGS.map((l) => `<div><i class="dot d-${l}"></i>${LNAME[l]}: ${c && c.refused_langs.includes(l) ? 'refused' : esc(val(q, v[l]))}</div>`).join('') +
+        LANGS.filter((l) => !c || c.langs[l].runs.length).map((l) => `<div><i class="dot d-${l}"></i>${LNAME[l]}: ${c && c.refused_langs.includes(l) ? 'refused' : esc(val(q, v[l]))}</div>`).join('') +
         (c ? `<div style="margin-top:4px">${c.flagged ? 'changed with the language' : c.refusal_split ? 'refused in one language only' : 'same answer'}</div>` : '');
       tip.hidden = false;
       tip.style.left = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8) + 'px';
@@ -196,27 +195,30 @@
     draw();
 
     // ---------- which way they lean ----------
+    // Like for like: only the AIs asked in every language, so each column averages the same AIs.
+    const FULL = S.full_models || M.map((m) => m.id);
+    const OTHER = LANGS.filter((l) => l !== 'en');
     const lean = Qa.map((q) => {
-      const cs = M.map((m) => cell(m.id, q.id)).filter(asked);
+      const cs = FULL.map((id) => cell(id, q.id)).filter(asked);
       const avg = Object.fromEntries(LANGS.map((l) => [l, mean(cs.map((c) => c.langs[l].mean).filter((x) => x != null))]));
       const d = (l) => (avg[l] == null || avg.en == null ? 0 : (pos(q.unit, avg[l]) - pos(q.unit, avg.en)) * 100);
-      return {q, avg, hi: d('hi'), zh: d('zh')};
-    }).sort((a, b) => Math.max(Math.abs(b.hi), Math.abs(b.zh)) - Math.max(Math.abs(a.hi), Math.abs(a.zh))).slice(0, 10);
-    const LIM = Math.max(10, ...lean.flatMap((r) => [Math.abs(r.hi), Math.abs(r.zh)]));
+      return {q, avg, d: Object.fromEntries(OTHER.map((l) => [l, d(l)]))};
+    }).sort((a, b) => Math.max(...OTHER.map((l) => Math.abs(b.d[l]))) - Math.max(...OTHER.map((l) => Math.abs(a.d[l])))).slice(0, 10);
+    const LIM = 1.4 * Math.max(10, ...lean.flatMap((r) => OTHER.map((l) => Math.abs(r.d[l]))));
     const bar = (x, l) => {
       const w = Math.abs(x) / LIM * 50;
       return `<div class="dv"><i class="${l}" style="${x < 0 ? `right:50%;` : `left:50%;`}width:${w}%"></i>` +
         `<b style="${x < 0 ? `right:calc(50% + ${w}% + 4px)` : `left:calc(50% + ${w}% + 4px)`}">${x > 0 ? '+' : ''}${Math.round(x)}</b></div>`;
     };
-    $('lean').innerHTML = `<div class="lrow head"><span>Question</span><span>Hindi vs English</span><span>Chinese vs English</span></div>` +
-      lean.map((r) => `<div class="lrow" title="${esc(r.q.question.en)}"><span class="t">${esc(r.q.topic)} <span class="sub">EN ${esc(val(r.q, r.avg.en))}</span></span>${bar(r.hi, 'hi')}${bar(r.zh, 'zh')}</div>`).join('') +
-      `<div class="lrow" aria-hidden="true"><span></span><span class="lean-key"><i>← lower than English</i><i>higher →</i></span><span class="lean-key"><i>← lower than English</i><i>higher →</i></span></div>` +
+    $('lean').innerHTML = `<div class="lrow head"><span>Question</span>${OTHER.map((l) => `<span>${LNAME[l]} vs English</span>`).join('')}</div>` +
+      lean.map((r) => `<div class="lrow" title="${esc(r.q.question.en)}"><span class="t">${esc(r.q.topic)} <span class="sub">EN ${esc(val(r.q, r.avg.en))}</span></span>${OTHER.map((l) => bar(r.d[l], l)).join('')}</div>`).join('') +
+      `<div class="lrow" aria-hidden="true"><span></span>${OTHER.map(() => '<span class="lean-key"><i>← lower</i><i>higher →</i></span>').join('')}</div>` +
       `<p class="sub">Shifts are in points on a 0–100 version of each question's scale (for 0–10 questions, 10 points = 1 step).</p>`;
 
     // ---------- method ----------
     const nAns = S.answers, nQ = Qa.length;
     $('method').innerHTML =
-      `<p>Five models (${M.map((m) => esc(m.label) + ' — ' + esc(m.maker)).join('; ')}) were asked ${nQ} contested questions${hasWork ? ' (society and politics, plus workplace decisions such as hiring, lending, pay and firing)' : ''} and two factual control questions, in English, Hindi and Chinese, ${nRuns} times each: ${nAns} answers in all. Every prompt asked for a short answer and one number on a stated scale, so answers can be compared across languages. The Hindi and Chinese prompts were translated back into English by a separate model to confirm the meaning matched.</p>` +
+      `<p>${M.length} models (${M.map((m) => esc(m.label) + ' — ' + esc(m.maker)).join('; ')}) were asked ${nQ} contested questions${hasWork ? ' (society and politics, plus workplace decisions such as hiring, lending, pay and firing)' : ''} and two factual control questions, ${nRuns} times each per language: ${nAns} answers in all. ${FULL.map((id) => esc(mById[id].label)).join(', ')} were asked in English, Hindi, Chinese, Bengali and Korean; the others in English, Hindi and Chinese. Every prompt asked for a short answer and one number on a stated scale, so answers can be compared across languages. Every translated prompt was translated back into English to confirm the meaning matched (by one separate model for Hindi and Chinese, by two for Bengali and Korean).</p>` +
       `<p>An answer <b>changed with the language</b> when its average number differs between languages by at least ${Math.round(S.thresholds.drift_min * 100)}% of the scale and by more than ${S.thresholds.noise_factor}× the wobble between repeat runs in the same language. It <b>refused in one language only</b> when it declined in most runs in that language but never in another. A separate judge model read each answer in its original language to write the English summary and flag refusals.</p>` +
       `<p>The control questions (boiling point of water, number of Lok Sabha seats) came out identical across languages for ${S.controls_ok} of ${S.controls_total} model runs, so the method itself is not creating the differences. Model costs: about ₹${Math.round(S.cost_inr)}. This page only replays the logged results and makes no AI calls.</p>`;
   }

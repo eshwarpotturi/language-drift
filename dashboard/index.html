@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Language Drift</title>
-<meta name="description" content="We asked five popular AI assistants the same questions in English, Hindi and Chinese. Sometimes the advice flipped with the language.">
+<meta name="description" content="We asked six popular AI assistants the same questions in English, Hindi, Chinese, Bengali and Korean. Sometimes the advice flipped with the language.">
 <meta name="color-scheme" content="light dark">
 <script>
   // Apply a saved theme before the page paints, so there's no flash.
@@ -12,7 +12,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,650;12..96,700&family=Instrument+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,650;12..96,700&family=Instrument+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Sans+Bengali:wght@400;600&family=Noto+Sans+KR:wght@400;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,9 +23,9 @@
 </button>
 <main class="story">
   <header class="intro">
-    <p class="eyebrow">An audit of five AI assistants in three languages</p>
+    <p class="eyebrow">An audit of six AI assistants in five languages</p>
     <h1>Would your company's AI give the same advice in every language?</h1>
-    <p class="lede" id="lede">We asked five popular AI assistants the same questions in English, Hindi and Chinese. Same AI, same question, only the language changed. Sometimes the advice flipped.</p>
+    <p class="lede" id="lede">We asked six popular AI assistants the same questions in English, Hindi, Chinese, Bengali and Korean. Same AI, same question, only the language changed. Sometimes the advice flipped.</p>
   </header>
 
   <section class="answers" id="answers" aria-label="Every answer, colour coded"></section>
@@ -33,7 +33,7 @@
   <section class="glance" id="glance" aria-label="Results at a glance"></section>
 
   <section class="step">
-    <p class="num"><span>1</span>One question, three answers</p>
+    <p class="num"><span>1</span>One question, different answers</p>
     <div id="hero-card"></div>
   </section>
 
@@ -59,7 +59,7 @@
   <section class="step">
     <p class="num"><span>5</span>What this means for a business</p>
     <div class="takeaways">
-      <div class="tk"><b>Test your AI in every language your people use.</b><span>An assistant that behaves well in English may give different advice in Hindi or Chinese. Check it the way you'd check a new policy document in translation.</span></div>
+      <div class="tk"><b>Test your AI in every language your people use.</b><span>An assistant that behaves well in English may give different advice in Hindi, Bengali, Chinese or Korean. Check it the way you'd check a new policy document in translation.</span></div>
       <div class="tk"><b>Keep a person on the big decisions.</b><span>The biggest differences showed up on hiring, firing, lending and pricing. Use AI to draft and explain, and let a person decide.</span></div>
       <div class="tk"><b>Re-check whenever you switch AI.</b><span>Some AIs were steady across languages and others were not. The choice of AI matters, so test before you roll out a new one.</span></div>
     </div>
@@ -71,7 +71,7 @@
       <div class="chart-head">
         <div>
           <h2 id="chart-h">All results</h2>
-          <p class="sub">Each row is one question; each thin line is one AI. The three dots on a line are its average answers in <span class="k-en">English</span>, <span class="k-hi">Hindi</span> and <span class="k-zh">Chinese</span>, on the question's own 0–10 or 0–100% scale. A long red bar means the language changed the answer beyond normal run-to-run variation. Click a row to read the answers.</p>
+          <p class="sub">Each row is one question; each thin line is one AI. The dots on a line are its average answers in <span class="k-en">English</span>, <span class="k-hi">Hindi</span>, <span class="k-zh">Chinese</span>, <span class="k-bn">Bengali</span> and <span class="k-ko">Korean</span>, on the question's own 0–10 or 0–100% scale. A long red bar means the language changed the answer beyond normal run-to-run variation. Click a row to read the answers.</p>
         </div>
         <div class="filters">
           <div class="seg" role="tablist" aria-label="Question set" id="f-group"></div>
@@ -83,7 +83,7 @@
     </section>
     <section class="panel lean">
       <h2>Which way the answers lean</h2>
-      <p class="sub">Average of all five AIs: how far the Hindi and Chinese answers sit from the English one on each question, largest shifts first.</p>
+      <p class="sub">Average of the three AIs asked in all five languages (Claude Haiku 4.5, Gemini 3.8 Flash, GPT-5.4 nano): how far each language's answer sits from the English one on each question, largest shifts first.</p>
       <div id="lean"></div>
     </section>
     <section class="panel method">
@@ -105,6 +105,7 @@
     label();
   })();
 </script>
+<script src="langs.js"></script>
 <script src="answers.js"></script>
 <script src="story.js"></script>
 <script src="analyst.js"></script>

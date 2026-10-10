@@ -3,15 +3,14 @@
 // "Changed" uses the same rule as the rest of the page: flagged || refusal_split.
 (function () {
   'use strict';
-  const LANGS = ['en', 'hi', 'zh'];
-  const LANG = {en: 'English', hi: 'Hindi', zh: 'Chinese'};
-  const SCRIPT = {en: 'English', hi: 'हिन्दी', zh: '中文'};
+  const {LANGS, LANG, SCRIPT} = (typeof window !== 'undefined' && window.LD_LANGS) || {LANGS: ['en', 'hi', 'zh', 'bn', 'ko'], LANG: {en: 'English', hi: 'Hindi', zh: 'Chinese', bn: 'Bengali', ko: 'Korean'}, SCRIPT: {en: 'English', hi: 'हिन्दी', zh: '中文', bn: 'বাংলা', ko: '한국어'}};
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const fmt = (x) => (typeof x === 'number' && isFinite(x) ? x.toLocaleString('en-IN', {maximumFractionDigits: Math.abs(x) >= 100 ? 0 : 1}) : '—');
 
   // What a person would hear, plus the score it came from.
   function labelOf(q, c, l) {
     const L = c.langs[l];
+    if (!L || !L.runs.length) return {text: 'Not asked', score: '', na: true};
     if (c.refused_langs.includes(l) || (L.mean == null && L.refusals)) return {text: 'Refused', score: ''};
     if (L.mean == null) return {text: 'No clear answer', score: ''};
     const p = q.plain || {};
@@ -27,21 +26,29 @@
 
   // Binary colours: green agrees, red is the odd one out.
   function coloursFor(c, q) {
-    const out = {en: 'green', hi: 'green', zh: 'green'};
+    const out = Object.fromEntries(LANGS.map((l) => [l, c.langs[l] && c.langs[l].runs.length ? 'green' : 'na']));
+    const AL = LANGS.filter((l) => out[l] !== 'na');   // only languages this AI was asked in
     if (c.refusal_split) { c.refused_langs.forEach((l) => { out[l] = 'red'; }); return out; }
     if (!c.flagged) return out;
     // What the reader sees comes first: if two answers read the same and one reads differently, that one is red.
     if (q) {
-      const t = Object.fromEntries(LANGS.map((l) => [l, labelOf(q, c, l).text]));
-      const odd = LANGS.filter((l) => LANGS.filter((k) => t[k] === t[l]).length === 1);
-      if (odd.length === 1) { out[odd[0]] = 'red'; return out; }
+      const t = Object.fromEntries(AL.map((l) => [l, labelOf(q, c, l).text]));
+      const odd = AL.filter((l) => AL.filter((k) => t[k] === t[l]).length === 1);
+      if (odd.length === 1 && AL.length >= 3) { out[odd[0]] = 'red'; return out; }
     }
     // Otherwise (all read the same, or all differ): the language on the far side of the biggest gap in scores.
-    const pts = LANGS.filter((l) => c.langs[l].mean != null).map((l) => [l, c.langs[l].mean]).sort((a, b) => a[1] - b[1]);
+    const pts = AL.filter((l) => c.langs[l].mean != null).map((l) => [l, c.langs[l].mean]).sort((a, b) => a[1] - b[1]);
     if (pts.length < 3) { if (pts.length === 2) out[pts[1][0]] = 'red'; return out; }
-    const g1 = pts[1][1] - pts[0][1], g2 = pts[2][1] - pts[1][1];
-    if (g1 >= g2) out[pts[0][0]] = 'red';
-    if (g2 >= g1) out[pts[2][0]] = 'red';
+    // Split the sorted answers at their biggest gap; the smaller side is the odd one out (ties: both ends).
+    let gi = 0, gmax = -1, ties = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const g = pts[i + 1][1] - pts[i][1];
+      if (g > gmax + 1e-9) { gmax = g; gi = i; ties = 0; } else if (Math.abs(g - gmax) <= 1e-9) ties++;
+    }
+    if (ties) { out[pts[0][0]] = 'red'; out[pts[pts.length - 1][0]] = 'red'; return out; }
+    const lowSide = pts.slice(0, gi + 1), highSide = pts.slice(gi + 1);
+    const oddSide = lowSide.length < highSide.length ? lowSide : highSide.length < lowSide.length ? highSide : [pts[0], pts[pts.length - 1]];
+    oddSide.forEach(([l]) => { out[l] = 'red'; });
     return out;
   }
 
@@ -57,7 +64,7 @@
     const M = data.models;
     const Q = data.questions.filter((q) => q.kind !== 'control');
     const cell = (m, q) => data.cells[m + '|' + q];
-    const asked = (c) => c && LANGS.some((l) => c.langs[l].runs.length);
+    const asked = (c) => c && LANGS.some((l) => c.langs[l] && c.langs[l].runs.length);
     const changed = (c) => c.flagged || c.refusal_split;
 
     const items = Q.map((q) => {
@@ -102,8 +109,8 @@
     }
     const chips = [['all', `All ${items.length} questions`], ['changed', 'Only where an AI changed'], ['workplace', 'Workplace'], ['society', 'Society & politics']];
     el.innerHTML =
-      `<div class="at-head"><h2>Every question, every AI, all three languages</h2>` +
-      `<p class="sub">Each table is one question. Each row is one AI’s answer in English, Hindi and Chinese. ` +
+      `<div class="at-head"><h2>Every question, every AI, every language</h2>` +
+      `<p class="sub">Each table is one question. Each row is one AI’s answer in English, Hindi, Chinese, Bengali and Korean (three of the AIs were asked in English, Hindi and Chinese only). ` +
       `<span class="key key-green">Green</span> the answers agree. <span class="key key-red">Red</span> the odd one out: the language where the AI changed its advice, or refused. ` +
       `${nChanged} of ${total} rows have a red answer.</p>` +
       `<p class="sub at-showing">Showing the ${items.filter((x) => x.n > 0).length} questions where at least one AI changed its answer. Pick “All ${items.length} questions” to see the rest.</p>` +

@@ -2,8 +2,7 @@
 // Reads the same data.json as story.js and counts the same way, so the numbers always match.
 (function () {
   'use strict';
-  const LANGS = ['en', 'hi', 'zh'];
-  const LANG = {en: 'English', hi: 'Hindi', zh: 'Chinese'};
+  const {LANGS, LANG} = window.LD_LANGS;
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const pct = (n, d) => (d ? Math.round((n / d) * 100) : 0);
 
@@ -12,17 +11,26 @@
   });
 
   function refusalChart(S, big) {
-    const R = S.refusals_by_language || {};
+    const R = S.refusals_full || S.refusals_by_language || {};
     const max = Math.max(1, ...LANGS.map((l) => R[l] || 0));
     const top = LANGS.reduce((a, l) => ((R[l] || 0) > (R[a] || 0) ? l : a), 'en');
     return `<div class="cols${big ? ' big' : ''}" role="img" aria-label="${esc(LANGS.map((l) => LANG[l] + ' ' + (R[l] || 0)).join(', '))} refusals">` +
       LANGS.map((l) => `<div class="col c-${l}${l === top ? ' top' : ''}"><b>${R[l] || 0}</b><span class="colbar"><i style="height:${((R[l] || 0) / max) * 100}%"></i></span><small>${LANG[l]}</small></div>`).join('') + '</div>';
   }
 
+  function langTag(S, id) {
+    const ls = (S.langs_by_model || {})[id];
+    return ls ? ` <small class="nl">${ls.length} lang${ls.length === 1 ? '' : 's'}</small>` : '';
+  }
+  function fullNames(M, S) {
+    const ids = S.full_models || M.map((m) => m.id);
+    return ids.length === M.length ? `all ${M.length} AIs` : 'the ' + ids.length + ' AIs asked in all five languages';
+  }
+
   function init(data) {
     const M = data.models, S = data.summary;
     const qById = Object.fromEntries(data.questions.map((q) => [q.id, q]));
-    const answered = Object.values(data.cells).filter((c) => qById[c.qid].kind !== 'control' && LANGS.some((l) => c.langs[l].runs.length));
+    const answered = Object.values(data.cells).filter((c) => qById[c.qid].kind !== 'control' && LANGS.some((l) => c.langs[l] && c.langs[l].runs.length));
     const hit = (c) => c.flagged || c.refusal_split;
     const work = answered.filter((c) => qById[c.qid].group === 'workplace');
     const soc = answered.filter((c) => qById[c.qid].group !== 'workplace');
@@ -45,10 +53,11 @@
         `<a class="gpanel" href="#s-models"><h2>Times each AI changed its advice</h2><p class="gsub">out of ${nQ} questions</p>` +
           `<div class="mbars">` + byModel.map(({m, n}) => `<div class="mb"><span class="gl">${esc(m.label)}</span><span class="gt"><i style="width:${(n / maxM) * 100}%"></i></span><b>${n}</b></div>`).join('') + `</div>` +
           `<span class="gmore">Compare the AIs</span></a>` +
-        `<a class="gpanel" href="#s-models"><h2>Refused to answer</h2><p class="gsub">all ${M.length} AIs, by language</p>` +
+        `<a class="gpanel" href="#s-models"><h2>Refused to answer</h2><p class="gsub">${fullNames(M, S)}, by language</p>` +
           refusalChart(S, false) + `<span class="gmore">See refusals</span></a>`;
     }
     const r = document.getElementById('refusals');
-    if (r) r.innerHTML = `<h3>Refusals by language, all ${M.length} AIs</h3>` + refusalChart(S, true);
+    if (r) r.innerHTML = `<h3>Refusals by language: ${fullNames(M, S)}</h3>` + refusalChart(S, true) +
+      `<p class="how">Counted only for the AIs asked in all five languages, about ${Math.round((S.answers_full || {}).en || 0)} answers per language, so every bar is like for like.</p>`;
   }
 })();
