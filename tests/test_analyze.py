@@ -31,7 +31,7 @@ def _rows(qset, value_by_lang, refused_zh=False):
     A, J = [], []
     for q in qset["questions"]:
         for m, _, _ in config.MODELS:
-            for lang in config.LANGS:
+            for lang in value_by_lang:
                 for r in range(3):
                     v = q["expected"] if q["kind"] == "control" else value_by_lang[lang]
                     A.append({"model": m, "qid": q["id"], "lang": lang, "run": r, "text": f"x\nNUMBER: {v}", "number": v})

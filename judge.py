@@ -1,13 +1,14 @@
 """Score every answer with one neutral judge model: English gist, stance, refused/hedged, number."""
 import asyncio
 import json
+import sys
 from pathlib import Path
 
 import httpx
 
 from ld import config
 from ld.budget import BudgetExceeded, Guard, Ledger
-from ld.openrouter import OpenRouterError, chat
+from ld.llm import LLMError as OpenRouterError, chat
 from ld.prompts import JUDGE_SYSTEM, judge_prompt, latest_ok, load_questions
 
 ANS = Path("logs/answers.jsonl")
@@ -42,8 +43,10 @@ async def main():
     answers = latest_ok(answers)
     done = {key(json.loads(l)) for l in OUT.read_text(encoding="utf-8").splitlines() if l.strip()} if OUT.exists() else set()
     todo = [a for a in answers if key(a) not in done]
-    ledger = Ledger()
-    guard = Guard(ledger, "judge", len(todo), config.BUDGET_INR / config.USD_TO_INR, config.GUARD_AFTER_CALLS)
+    ledger = Ledger(config.SPEND_FILE)
+    budget_inr = float(sys.argv[sys.argv.index("--budget-inr") + 1]) if "--budget-inr" in sys.argv else config.STEP_BUDGET_INR["judge"]
+    print(f"hard stop: ₹{budget_inr:.0f} for this judging run")
+    guard = Guard(ledger, "judge", len(todo), budget_inr / config.USD_TO_INR, config.GUARD_AFTER_CALLS, per_step=True)
     sem, stop = asyncio.Semaphore(config.CONCURRENCY), asyncio.Event()
     print(f"{len(todo)} answers to judge; spent so far ${ledger.total:.3f}")
     async with httpx.AsyncClient() as client:

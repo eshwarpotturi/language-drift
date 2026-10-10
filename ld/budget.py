@@ -27,11 +27,14 @@ class Ledger:
 class Guard:
     """Projects this step's total from the first calls; aborts if ledger + projection > budget."""
 
-    def __init__(self, ledger, step, total_calls, budget_usd, after_calls=20):
+    def __init__(self, ledger, step, total_calls, budget_usd, after_calls=20, per_step=False):
+        """per_step=False: budget caps the ledger total (the original runs).
+        per_step=True: budget caps only what this Guard spends (each Bengali/Korean step)."""
         self.ledger, self.step = ledger, step
         self.total_calls, self.budget, self.after = total_calls, budget_usd, after_calls
         self.done, self.spent = 0, 0.0
-        self.start_total = ledger.total
+        self.start_total = 0.0 if per_step else ledger.total
+        self.per_step = per_step
 
     def projection(self):
         if not self.done:
@@ -42,7 +45,8 @@ class Guard:
         self.done += 1
         self.spent += usd
         self.ledger.add(self.step, usd)
-        if self.ledger.total > self.budget:
-            raise BudgetExceeded(f"spent ${self.ledger.total:.3f} > budget ${self.budget:.2f}")
+        so_far = self.spent if self.per_step else self.ledger.total
+        if so_far > self.budget:
+            raise BudgetExceeded(f"spent ${so_far:.3f} > budget ${self.budget:.2f}")
         if self.done == self.after and self.projection() > self.budget:
             raise BudgetExceeded(f"projected ${self.projection():.3f} > budget ${self.budget:.2f}")

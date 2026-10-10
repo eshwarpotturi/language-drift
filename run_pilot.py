@@ -12,7 +12,7 @@ import httpx
 
 from ld import config
 from ld.budget import BudgetExceeded, Guard, Ledger
-from ld.openrouter import OpenRouterError, chat
+from ld.llm import LLMError as OpenRouterError, chat
 from ld.parse import parse_number
 from ld.prompts import answer_prompt, is_truncated, load_questions
 
@@ -23,10 +23,20 @@ def job_key(j):
     return f"{j['model']}|{j['qid']}|{j['lang']}|{j['run']}"
 
 
-def build_jobs(qset, models=None, runs=config.RUNS):
+def build_jobs(qset, models=None, runs=config.RUNS, langs=None, qids=None):
+    """Every (model, question, language, run). New languages ask the two controls only once."""
     models = models or [m[0] for m in config.MODELS]
-    return [{"model": m, "qid": q["id"], "lang": lang, "run": r}
-            for r in range(runs) for q in qset["questions"] for lang in config.LANGS for m in models]
+    langs = langs or config.LANGS
+    jobs = []
+    for r in range(runs):
+        for q in qset["questions"]:
+            if qids and q["id"] not in qids:
+                continue
+            for lang in langs:
+                if q["kind"] == "control" and lang not in config.ORIGINAL_LANGS and r >= config.CONTROL_RUNS_NEW:
+                    continue
+                jobs += [{"model": m, "qid": q["id"], "lang": lang, "run": r} for m in models]
+    return jobs
 
 
 def done_keys(path=OUT):
@@ -43,13 +53,13 @@ def done_keys(path=OUT):
     return keys
 
 
-async def run(jobs, qset, budget_usd, limit=None):
+async def run(jobs, qset, budget_usd, limit=None, step="answers", per_step=False):
     qmap = {q["id"]: q for q in qset["questions"]}
     remaining = [j for j in jobs if job_key(j) not in done_keys()]
     already = len(jobs) - len(remaining)
     todo = remaining[:limit]
-    ledger = Ledger()
-    guard = Guard(ledger, "answers", len(todo), budget_usd, config.GUARD_AFTER_CALLS)
+    ledger = Ledger(config.SPEND_FILE)
+    guard = Guard(ledger, step, len(todo), budget_usd, config.GUARD_AFTER_CALLS, per_step=per_step)
     OUT.parent.mkdir(exist_ok=True)
     sem = asyncio.Semaphore(config.CONCURRENCY)
     stop = asyncio.Event()
@@ -92,15 +102,20 @@ def main():
     ap.add_argument("--limit", type=int)
     ap.add_argument("--models", nargs="*")
     ap.add_argument("--runs", type=int, default=config.RUNS)
+    ap.add_argument("--langs", nargs="*", help="e.g. --langs bn (default: every language)")
+    ap.add_argument("--budget-inr", type=float, default=config.STEP_BUDGET_INR["answers"],
+                    help="hard stop for this run, in INR")
     a = ap.parse_args()
     qset = load_questions()
-    jobs = build_jobs(qset, a.models, a.runs)
+    jobs = build_jobs(qset, a.models, a.runs, a.langs)
     if a.dry_run:
-        print(f"{len(jobs)} calls: {len(qset['questions'])} questions x {len(config.LANGS)} languages x "
-              f"{len(a.models or config.MODELS)} models x {a.runs} runs")
-        print(answer_prompt(qset, qset["questions"][0], "hi"))
+        print(f"{len(jobs)} calls for languages {a.langs or config.LANGS} "
+              f"({len(a.models or config.MODELS)} models, {a.runs} runs; new languages ask the controls once)")
+        print(answer_prompt(qset, qset["questions"][0], (a.langs or ["hi"])[0]))
         return
-    asyncio.run(run(jobs, qset, config.ANSWERS_BUDGET_INR / config.USD_TO_INR, a.limit))
+    step = "answers-" + "-".join(a.langs) if a.langs else "answers"
+    print(f"hard stop: ₹{a.budget_inr:.0f} (${a.budget_inr / config.USD_TO_INR:.2f}) for this run")
+    asyncio.run(run(jobs, qset, a.budget_inr / config.USD_TO_INR, a.limit, step=step, per_step=True))
 
 
 if __name__ == "__main__":
