@@ -38,3 +38,8 @@ def test_missing_key_is_a_clear_error(monkeypatch):
     monkeypatch.setenv("LLMFOUNDRY_BASE_URL", "https://x")
     with pytest.raises(llm.LLMError):
         llm._provider()
+
+
+def test_gemini_has_thinking_cap():
+    m = llm.all_models()["google/gemini-3.8-flash"]
+    assert m["route"] == "gemini" and m["thinking_budget"] == 512

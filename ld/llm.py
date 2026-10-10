@@ -150,6 +150,9 @@ def _complete_route(m: dict, messages: list[dict], max_tokens: int, temperature:
                   "reasoning_effort": m.get("effort") or None}
         if m["route"] == "gemini":
             kwargs["temperature"] = temperature
+            if m.get("thinking_budget"):   # an explicit cap replaces the effort level
+                kwargs.pop("reasoning_effort", None)
+                kwargs["extra_body"] = {"extra_body": {"google": {"thinking_config": {"thinking_budget": m["thinking_budget"]}}}}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
         kwargs = {k: v for k, v in kwargs.items() if v is not None}

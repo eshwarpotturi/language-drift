@@ -7,17 +7,20 @@
 # route: a model with `route` is called on LLM Foundry's direct provider route (as slm-opti's
 # run_eval.py does: anthropic / gemini / openai), with the Foundry token from .env. Others use LLM_PROVIDER.
 #
+# thinking_budget: on Foundry's Gemini route, `low` effort thinks ~1,500 tokens and cuts answers off;
+# a 512-token cap matched the original OpenRouter answers in a check on 2026-10-10.
+#
 # effort: the reasoning setting sent with every call. All models use `low`, as in the
 # original English/Hindi/Chinese run, so new languages are asked under the same conditions.
 
 models:
   gpt-6-luna:          {id: openai/gpt-6-luna,            label: GPT-6 Luna,          maker: "OpenAI · US",      effort: low, input: 0.10, output: 0.50,  cache_read: 0.01}
   claude-haiku-4.5:    {id: anthropic/claude-haiku-4.5,   label: Claude Haiku 4.5,    maker: "Anthropic · US",   effort: low, input: 1.00, output: 5.00,  cache_read: 0.10,  route: anthropic, route_model: claude-haiku-4-5-20251001}
-  gemini-3.8-flash:    {id: google/gemini-3.8-flash,      label: Gemini 3.8 Flash,    maker: "Google · US",      effort: low, input: 0.75, output: 3.75,  cache_read: 0.075, route: gemini,    route_model: gemini-3.8-flash}
+  gemini-3.8-flash:    {id: google/gemini-3.8-flash,      label: Gemini 3.8 Flash,    maker: "Google · US",      effort: low, input: 0.75, output: 3.75,  cache_read: 0.075, route: gemini,    route_model: gemini-3.8-flash, thinking_budget: 512}
   deepseek-v4.1-flash: {id: deepseek/deepseek-v4.1-flash, label: DeepSeek V4.1 Flash, maker: "DeepSeek · China", effort: low, input: 0.02, output: 0.396, cache_read: 0.00291}
   qwen3.8-flash:       {id: qwen/qwen3.8-flash,           label: Qwen 3.8 Flash,      maker: "Alibaba · China",  effort: low, input: 0.15, output: 0.47,  cache_read: 0.016}
 
 # Scores every answer and does back-translation. Not one of the five, so it has no stake.
 judge_model: {id: openai/gpt-5.4-mini, effort: low, input: 0.75, output: 4.50, cache_read: 0.075, route: openai, route_model: gpt-5.4-mini}
 # Second, independent back-translation for the meaning check.
-second_translator: {id: google/gemini-3.5-flash-lite, effort: low, input: 0.30, output: 2.50, cache_read: 0.03, route: gemini, route_model: gemini-3.5-flash-lite}
+second_translator: {id: google/gemini-3.5-flash-lite, effort: low, input: 0.30, output: 2.50, cache_read: 0.03, route: gemini, route_model: gemini-3.5-flash-lite, thinking_budget: 512}
