@@ -104,10 +104,70 @@ def _retry(call, retries: int = 6):
             time.sleep(min(2 ** attempt, 32))
 
 
+# LLM Foundry's direct provider routes, as used in slm-opti's run_eval.py.
+FOUNDRY_ROUTES = {"openai": "/openai/v1", "gemini": "/gemini/v1beta/openai", "anthropic": "/anthropic/v1/messages"}
+ANTHROPIC_THINKING = 1024   # "low" thinking for Claude on its native API (1024 is the smallest budget allowed)
+
+
+def _foundry():
+    root, key = os.environ.get("LLMFOUNDRY_BASE_URL", ""), os.environ.get("LLMFOUNDRY_API_KEY", "")
+    if not root or not key:
+        raise LLMError("LLMFOUNDRY_BASE_URL / LLMFOUNDRY_API_KEY missing in .env")
+    return root.rstrip("/"), key + ":language-drift"   # Foundry's  Bearer <token>:<project>
+
+
+@cache
+def _route_client(route: str) -> OpenAI:
+    root, key = _foundry()
+    return OpenAI(base_url=root + FOUNDRY_ROUTES[route], api_key=key, timeout=TIMEOUT, default_headers=NO_CACHE, max_retries=0)
+
+
+def _anthropic(m: dict, messages: list[dict], max_tokens: int) -> dict:
+    import httpx
+    root, key = _foundry()
+    body = {"model": m["route_model"], "max_tokens": max_tokens + ANTHROPIC_THINKING, "messages": messages,
+            "thinking": {"type": "enabled", "budget_tokens": ANTHROPIC_THINKING}}
+    for attempt in range(6):
+        r = httpx.post(root + FOUNDRY_ROUTES["anthropic"], json=body, timeout=TIMEOUT,
+                       headers={"Authorization": "Bearer " + key, "anthropic-version": "2023-06-01", **NO_CACHE})
+        if r.status_code == 200:
+            return r.json()
+        if r.status_code in (400, 401, 402, 403, 404) or attempt == 5:
+            raise LLMError(f"anthropic route {r.status_code}: {r.text[:200]}")
+        time.sleep(min(2 ** attempt, 32))
+
+
+def _complete_route(m: dict, messages: list[dict], max_tokens: int, temperature: float, json_mode: bool) -> dict:
+    t0 = time.perf_counter()
+    if m["route"] == "anthropic":
+        d = _anthropic(m, messages, max_tokens)
+        text = "".join(b.get("text", "") for b in d.get("content", []) if b.get("type") == "text")
+        u = d.get("usage", {})
+        tin, tout, cached = u.get("input_tokens", 0), u.get("output_tokens", 0), u.get("cache_read_input_tokens", 0) or 0
+        tin += cached
+    else:
+        kwargs = {"model": m["route_model"], "messages": messages, "max_completion_tokens": max_tokens,
+                  "reasoning_effort": m.get("effort") or None}
+        if m["route"] == "gemini":
+            kwargs["temperature"] = temperature
+        if json_mode:
+            kwargs["response_format"] = {"type": "json_object"}
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        r = _retry(lambda: _route_client(m["route"]).chat.completions.create(**kwargs))
+        text, u = (r.choices[0].message.content or ""), r.usage
+        details = getattr(u, "prompt_tokens_details", None)
+        cached = (getattr(details, "cached_tokens", 0) or 0) if details else 0
+        tin, tout = u.prompt_tokens, u.completion_tokens
+    return {"text": text.strip(), "cost_usd": price(m["id"], tin, cached, tout), "prompt_tokens": tin,
+            "completion_tokens": tout, "latency_ms": round((time.perf_counter() - t0) * 1000)}
+
+
 def complete(model_id: str, messages: list[dict], *, max_tokens: int, temperature: float = 0.7,
              json_mode: bool = False) -> dict:
     """One metered chat completion. Returns {text, cost_usd, prompt_tokens, completion_tokens, latency_ms}."""
     m = all_models()[model_id]
+    if m.get("route"):
+        return _complete_route(m, messages, max_tokens, temperature, json_mode)
     extra = {"reasoning": {"effort": m["effort"], "exclude": True}} if m.get("effort") else {}
     extra["usage"] = {"include": True}   # OpenRouter then reports the exact cost of the call
     kwargs = {"model": model_id, "messages": messages, "max_tokens": max_tokens, "temperature": temperature,

@@ -4,7 +4,7 @@ Re-asks a few questions in English, a couple of runs per model, through the same
 languages, and writes them to logs/route_check.jsonl. tools/route_check_report.py compares them with
 the stored English answers in logs/answers.jsonl.
 
-    python tools/route_check.py            # 5 questions x 5 models x 2 runs = 50 calls
+    python tools/route_check.py            # 5 questions x the directly-routed models x 2 runs
 """
 import argparse
 import asyncio
@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ld import config  # noqa: E402
 from ld.budget import BudgetExceeded, Guard, Ledger  # noqa: E402
 from ld.llm import LLMError, chat  # noqa: E402
+from ld.llm import all_models as llm_all  # noqa: E402
 from ld.parse import parse_number  # noqa: E402
 from ld.prompts import answer_prompt, load_questions  # noqa: E402
 
@@ -26,7 +27,8 @@ QIDS = ["q29", "q16", "q15", "q22", "q07"]   # mix of stable and drifting, workp
 async def main(runs, budget_inr):
     qset = load_questions()
     qmap = {q["id"]: q for q in qset["questions"]}
-    jobs = [(m, qid, r) for r in range(runs) for qid in QIDS for m, _, _ in config.MODELS]
+    routed = [m for m, mm in llm_all().items() if mm.get("route") and m in {x[0] for x in config.MODELS}]
+    jobs = [(m, qid, r) for r in range(runs) for qid in QIDS for m in routed]
     ledger = Ledger(config.SPEND_FILE)
     guard = Guard(ledger, "route_check", len(jobs), budget_inr / config.USD_TO_INR, 10, per_step=True)
     sem = asyncio.Semaphore(config.CONCURRENCY)
@@ -34,7 +36,7 @@ async def main(runs, budget_inr):
 
     async def one(m, qid, r):
         async with sem:
-            row = {"model": m, "qid": qid, "lang": "en", "run": r, "route": "llmfoundry"}
+            row = {"model": m, "qid": qid, "lang": "en", "run": r, "route": "llmfoundry-direct"}
             try:
                 res = await chat(None, m, [{"role": "user", "content": answer_prompt(qset, qmap[qid], "en")}],
                                  max_tokens=config.ANSWER_MAX_TOKENS, temperature=config.TEMPERATURE)
