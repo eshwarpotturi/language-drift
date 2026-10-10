@@ -158,6 +158,10 @@ def _complete_route(m: dict, messages: list[dict], max_tokens: int, temperature:
         details = getattr(u, "prompt_tokens_details", None)
         cached = (getattr(details, "cached_tokens", 0) or 0) if details else 0
         tin, tout = u.prompt_tokens, u.completion_tokens
+        # Gemini's OpenAI-compatible route leaves thinking tokens out of completion_tokens but bills them;
+        # total_tokens includes them, so count output as total - prompt.
+        if getattr(u, "total_tokens", None):
+            tout = max(tout, u.total_tokens - u.prompt_tokens)
     return {"text": text.strip(), "cost_usd": price(m["id"], tin, cached, tout), "prompt_tokens": tin,
             "completion_tokens": tout, "latency_ms": round((time.perf_counter() - t0) * 1000)}
 
