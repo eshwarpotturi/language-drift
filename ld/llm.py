@@ -21,6 +21,7 @@ import time
 from functools import cache
 from pathlib import Path
 
+import httpx  # imported here, not inside the worker threads (concurrent first imports deadlock)
 import yaml
 from dotenv import load_dotenv
 from openai import APIError, OpenAI, RateLimitError
@@ -123,7 +124,6 @@ def _route_client(route: str) -> OpenAI:
 
 
 def _anthropic(m: dict, messages: list[dict], max_tokens: int) -> dict:
-    import httpx
     root, key = _foundry()
     body = {"model": m["route_model"], "max_tokens": max_tokens + ANTHROPIC_THINKING, "messages": messages,
             "thinking": {"type": "enabled", "budget_tokens": ANTHROPIC_THINKING}}
