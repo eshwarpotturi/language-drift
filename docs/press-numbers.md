@@ -1,6 +1,6 @@
 # Language Drift: numbers safe to quote
 
-For the Straive press release. Every number below comes from `dashboard/data.json` on the `bengali-korean` branch.
+For the press release. Every number below comes from `dashboard/data.json` on the `bengali-korean` branch.
 
 ## What was tested
 
